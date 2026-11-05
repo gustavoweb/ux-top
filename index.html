@@ -191,6 +191,8 @@ h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
 .recado { font-size: 14px; color: var(--apagado); min-height: 1.5em; }
 
 .rodape { padding-block: 16px 24px; font-size: 14px; color: var(--apagado); margin: 0; max-width: 72ch; }
+.rodape + .rodape { padding-top: 0; }
+.rodape a { color: var(--azul); font-weight: 700; }
 
 @media (max-width: 800px) {
   .grade { grid-template-columns: minmax(0, 1fr); }
@@ -324,7 +326,7 @@ h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
 
     <section class="campo" id="c8">
       <header><span class="num">Campo 08 · Nome</span><h2>Nome completo na roleta</h2></header>
-      <p class="lei">As letras passam em ordem aleatória. Pare na letra certa. Errou, apaga tudo. Salve com pelo menos 4 letras.</p>
+      <p class="lei">As letras passam em ordem aleatória. Exigência: soletre <b>GUSTAVOWEB</b> e salve. Errou uma letra, apaga tudo.</p>
       <div class="palco roleta">
         <div class="letra" id="letra" aria-hidden="true">A</div>
         <div>
@@ -386,6 +388,7 @@ h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
 
   </div>
   <p class="rodape">Esta repartição não existe. Os padrões daqui existem: cancelamento escondido, consentimento confuso e progresso falso aparecem em sites reais com menos humor.</p>
+  <p class="rodape">Desenvolvido por <a href="https://gustavoweb.com">gustavoweb.com</a></p>
 </div>
 
 <script>
@@ -635,7 +638,7 @@ h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
 
   /* 08 Roleta de letras */
   (function () {
-    const abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ '.split('');
+    const abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
     for (let i = abc.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [abc[i], abc[j]] = [abc[j], abc[i]];
@@ -650,8 +653,8 @@ h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
     $('apagar').addEventListener('click', () => { $('nome').textContent = ''; $('s8').textContent = 'Nome apagado. Tudo.'; });
     $('salvar').addEventListener('click', () => {
       const nome = $('nome').textContent.trim();
-      if (nome.length < 4) { $('s8').textContent = 'Nome muito curto. Faltam letras: ' + (4 - nome.length) + '.'; return; }
-      carimbar(8, 'Cadastro salvo como ' + nome + '. Confere com o seu RG? Agora é tarde.');
+      if (nome !== 'GUSTAVOWEB') { $('s8').textContent = 'Nome não confere com o cadastro. O sistema aguarda GUSTAVOWEB.'; return; }
+      carimbar(8, 'Cadastro salvo como GUSTAVOWEB. Confere com o seu RG? Agora é tarde.');
     });
   })();
 
