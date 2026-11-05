@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
+<title>Repartição da UX Hostil</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: uma folha de formulário contínuo, com furos de trator e zebra verde. Cada campo é uma célula do requerimento e ganha um carimbo. */
+:root {
+  --papel: #f7f9ef;
+  --zebra: #e2eed6;
+  --tinta: #1d2a23;
+  --apagado: #526459;
+  --linha: #86a08e;
+  --superficie: #ffffff;
+  --vermelho: #c0202c;
+  --azul: #1f3fa6;
+  --sombra-furo: #c9d6c2;
+  --display: "Alfa Slab One", "Rockwell", Georgia, serif;
+  --maquina: "Courier Prime", "Courier New", Courier, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --papel: #111a15; --zebra: #17231c; --tinta: #e4eee1; --apagado: #a0b3a6; --linha: #466054;
+    --superficie: #0c130f; --vermelho: #ff7078; --azul: #9db2ff; --sombra-furo: #050806; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --papel: #111a15; --zebra: #17231c; --tinta: #e4eee1; --apagado: #a0b3a6; --linha: #466054;
+  --superficie: #0c130f; --vermelho: #ff7078; --azul: #9db2ff; --sombra-furo: #050806; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--papel); color: var(--tinta);
+  font: 16px/1.5 var(--maquina);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px 56px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--papel); }
+button, input { font: inherit; color: inherit; }
+button {
+  background: var(--superficie); border: 2px solid var(--tinta); padding: 8px 12px;
+  font-weight: 700; cursor: pointer; box-shadow: 3px 3px 0 var(--tinta);
+}
+button:hover { background: var(--zebra); }
+button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--tinta); }
+button:disabled { opacity: .5; cursor: not-allowed; }
+:focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+
+.folha {
+  max-width: 1120px; margin-inline: auto; position: relative;
+  background: repeating-linear-gradient(var(--papel) 0 72px, var(--zebra) 72px 144px);
+  padding-inline: 44px;
+}
+.folha::before, .folha::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 32px;
+  background: radial-gradient(circle at 50% 18px, var(--sombra-furo) 0 7px, transparent 7.5px) 0 0 / 32px 36px repeat-y;
+}
+.folha::before { left: 0; border-right: 2px dashed var(--linha); }
+.folha::after { right: 0; border-left: 2px dashed var(--linha); }
+
+.cabecalho { padding-block: 32px 24px; display: grid; gap: 12px; }
+.via { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--apagado); margin: 0; }
+h1 {
+  font: 400 clamp(32px, 7vw, 68px)/1.04 var(--display); margin: 0; text-wrap: balance;
+  color: var(--vermelho);
+}
+.cabecalho .intro { margin: 0; max-width: 64ch; }
+
+.protocolo {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px;
+  background: var(--papel); border-block: 2px solid var(--tinta); padding: 8px 12px;
+  font-weight: 700;
+}
+.protocolo .fila { display: flex; gap: 4px; flex-wrap: wrap; }
+.protocolo .fila i { width: 14px; height: 14px; border: 2px solid var(--tinta); display: block; }
+.protocolo .fila i.ok { background: var(--azul); border-color: var(--azul); }
+.protocolo .conta { font-variant-numeric: tabular-nums; }
+.protocolo .parecer { font-weight: 400; color: var(--apagado); min-width: 0; }
+
+.grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-left: 2px solid var(--tinta); border-top: 0; }
+.campo {
+  position: relative; min-width: 0; padding: 16px; display: flex; flex-direction: column; gap: 12px;
+  border-right: 2px solid var(--tinta); border-bottom: 2px solid var(--tinta);
+}
+.campo header { padding-right: 112px; }
+.num { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--apagado); }
+h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
+.lei { margin: 0; font-size: 15px; }
+.status { margin: auto 0 0; font-size: 14px; font-weight: 700; min-height: 2.9em; }
+
+.carimbo {
+  position: absolute; top: 14px; right: 12px; padding: 2px 6px; pointer-events: none;
+  font: 400 13px/1.3 var(--display); letter-spacing: .04em;
+  border: 2px dashed var(--linha); color: var(--apagado); transform: rotate(4deg);
+}
+.campo.feito .carimbo {
+  border: 3px solid var(--azul); color: var(--azul); font-size: 15px; transform: rotate(-7deg);
+  animation: bate .28s ease-out;
+}
+@keyframes bate { from { transform: rotate(-7deg) scale(2.2); opacity: 0; } to { transform: rotate(-7deg) scale(1); opacity: 1; } }
+
+.palco { background: var(--superficie); border: 2px solid var(--tinta); position: relative; }
+
+/* Relógio */
+.relogio { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; padding: 12px; }
+.relogio svg { width: 200px; max-width: 100%; height: auto; touch-action: none; cursor: grab; flex: none; }
+.relogio svg:active { cursor: grabbing; }
+.relogio .tick { stroke: var(--tinta); stroke-width: 2; }
+.relogio text { fill: var(--tinta); font: 700 13px var(--maquina); text-anchor: middle; dominant-baseline: central; }
+.relogio .aro { fill: none; stroke: var(--tinta); stroke-width: 3; }
+.relogio .ponteiro { stroke: var(--vermelho); stroke-width: 6; stroke-linecap: round; }
+.relogio .eixo { fill: var(--vermelho); }
+.leitura { min-width: 0; flex: 1 1 160px; }
+.leitura b { display: block; font: 400 21px/1.2 var(--display); }
+.leitura span { color: var(--apagado); font-size: 14px; font-variant-numeric: tabular-nums; }
+
+/* Termos */
+.termos { height: 210px; overflow: hidden; padding: 12px; touch-action: none; font-size: 15px; }
+.termos p { margin: 0 0 12px; }
+.linha-acao { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+/* Zonas com seta falsa */
+.zona { height: 230px; overflow: hidden; cursor: none; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+.zona * { cursor: none; }
+.seta { position: absolute; left: 0; top: 0; width: 34px; height: 44px; pointer-events: none; z-index: 3; }
+.seta path { fill: var(--tinta); stroke: var(--superficie); stroke-width: 2; }
+.alvo { position: absolute; pointer-events: none; }
+.quadrinho { width: 24px; height: 24px; padding: 0; box-shadow: none; }
+.quadrinho.ok { background: var(--azul); border-color: var(--azul); }
+.rotulo { position: absolute; font-size: 13px; color: var(--apagado); }
+.erro { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--vermelho); pointer-events: none; }
+
+/* Fuga */
+.fuga { height: 230px; overflow: hidden; }
+.fuga #manter { position: absolute; left: 12px; right: 12px; top: 12px; }
+.fuga #fugitivo { position: absolute; font-size: 13px; font-weight: 400; padding: 4px 8px; box-shadow: none; transition: left .12s, top .12s; white-space: nowrap; }
+
+/* Telefone */
+.fone { padding: 16px 12px; display: grid; gap: 12px; }
+.fone output { font: 400 clamp(21px, 4vw, 28px)/1.2 var(--display); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.fone input { width: 100%; accent-color: var(--vermelho); }
+
+/* Senha */
+.senha { padding: 12px; display: grid; gap: 10px; }
+.senha label { font-size: 14px; }
+.senha input { width: 100%; padding: 8px; background: var(--papel); border: 2px solid var(--tinta); }
+.regras { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 14px; }
+.regras li::before { content: "[ ] "; font-weight: 700; color: var(--vermelho); }
+.regras li.ok::before { content: "[x] "; color: var(--azul); }
+
+/* Roleta */
+.roleta { padding: 12px; display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; align-items: center; }
+.letra { font: 400 56px/96px var(--display); text-align: center; height: 96px; background: var(--tinta); color: var(--papel); }
+.nome { font: 700 22px/1.3 var(--maquina); min-height: 1.3em; border-bottom: 2px solid var(--tinta); overflow-wrap: anywhere; }
+.roleta .linha-acao { margin-top: 8px; }
+
+/* Volume */
+.volume { height: 140px; overflow: hidden; display: grid; place-items: center; touch-action: none; }
+.barra { width: min(74%, 300px); height: 8px; background: var(--tinta); position: relative; }
+.bola { position: absolute; top: -22px; left: 0; width: 22px; height: 22px; margin-left: -11px; border-radius: 50%; background: var(--vermelho); }
+.faixa { position: absolute; top: 0; height: 8px; left: 65%; width: 20%; background: var(--azul); }
+.valor { position: absolute; right: 8px; top: 6px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* Cookies */
+.cookies { padding: 8px 12px; display: grid; gap: 2px; }
+.chave { display: flex; justify-content: space-between; gap: 12px; align-items: center; width: 100%; border: 0; box-shadow: none; background: none; padding: 6px 0; text-align: left; font-weight: 400; }
+.chave:active { transform: none; box-shadow: none; }
+.chave i { flex: none; width: 46px; height: 24px; border: 2px solid var(--tinta); position: relative; background: var(--papel); }
+.chave i::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: var(--tinta); transition: left .12s; }
+.chave[aria-checked="true"] i { background: var(--vermelho); }
+.chave[aria-checked="true"] i::after { left: 24px; background: var(--papel); }
+
+/* Dupla negação */
+.dialogo { padding: 16px 12px; display: grid; gap: 14px; }
+.dialogo p { margin: 0; font-weight: 700; }
+.dialogo .linha-acao > * { flex: 1 1 150px; }
+
+/* Progresso */
+.progresso { padding: 16px 12px; display: grid; gap: 10px; }
+.trilho { height: 26px; border: 2px solid var(--tinta); background: repeating-linear-gradient(90deg, var(--papel) 0 10px, var(--zebra) 10px 20px); }
+.trilho i { display: block; height: 100%; width: 0; background: var(--azul); }
+.pct { font: 400 24px/1.1 var(--display); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.recado { font-size: 14px; color: var(--apagado); min-height: 1.5em; }
+
+.rodape { padding-block: 16px 24px; font-size: 14px; color: var(--apagado); margin: 0; max-width: 72ch; }
+
+@media (max-width: 800px) {
+  .grade { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  .folha { padding-inline: 0; background: repeating-linear-gradient(var(--papel) 0 72px, var(--zebra) 72px 144px); }
+  .folha::before, .folha::after { display: none; }
+  .relogio svg { margin-inline: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .campo.feito .carimbo { animation: none; }
+  .fuga #fugitivo, .chave i::after { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="folha">
+  <section class="cabecalho">
+    <p class="via">Modelo 666-B · Preencher em três vias · Fictício, felizmente</p>
+    <h1>Requerimento de Usabilidade Indevida</h1>
+    <p class="intro">Cada campo abaixo funciona, e cada um foi projetado para atrapalhar você. Cumpra a exigência para ganhar o carimbo. Com os 12 carimbos, leve tudo ao Guichê 13, que fecha para o almoço.</p>
+  </section>
+
+  <div class="protocolo">
+    <span class="conta" id="conta">0 de 12 carimbos</span>
+    <span class="fila" id="fila" aria-hidden="true"></span>
+    <span class="parecer" id="parecer">Situação: aguardando o requerente desistir.</span>
+  </div>
+
+  <div class="grade">
+
+    <section class="campo" id="c1">
+      <header><span class="num">Campo 01 · Data</span><h2>Vencimento por manivela</h2></header>
+      <p class="lei">Arraste o ponteiro. Uma volta no mostrador de 24 horas muda um dia. Exigência: <b id="alvoData"></b>.</p>
+      <div class="palco relogio">
+        <svg id="relogio" viewBox="0 0 240 240" tabindex="0" role="slider" aria-label="Ponteiro de 24 horas" aria-valuetext="">
+          <circle class="aro" cx="120" cy="120" r="114"></circle>
+          <g id="marcas"></g>
+          <line class="ponteiro" id="ponteiro" x1="120" y1="120" x2="120" y2="42"></line>
+          <circle class="eixo" cx="120" cy="120" r="9"></circle>
+        </svg>
+        <div class="leitura"><b id="dataLida"></b><span id="horaLida"></span></div>
+      </div>
+      <p class="status" id="s1" aria-live="polite">Faltam voltas. Atalho de teclado: setas, uma hora por toque.</p>
+      <span class="carimbo">PENDENTE</span>
+    </section>
+
+    <section class="campo" id="c2">
+      <header><span class="num">Campo 02 · Rolagem</span><h2>Termos na contramão</h2></header>
+      <p class="lei">Para descer, gire para cima. O dedo no celular e as setas do teclado também estão invertidos. Leia até o fim.</p>
+      <div class="palco termos" id="termos" tabindex="0" aria-label="Termos de uso com rolagem invertida">
+        <p><b>Cláusula 1.</b> Ao ler esta frase, o usuário declara ter lido a frase seguinte.</p>
+        <p><b>Cláusula 2.</b> A rolagem foi invertida para o seu conforto. Reclamações devem ser enviadas por fax.</p>
+        <p><b>Cláusula 3.</b> O usuário cede à Repartição todos os seus domingos, inclusive os já vividos.</p>
+        <p><b>Cláusula 4.</b> Este termo pode mudar sem aviso, e talvez já tenha mudado enquanto você lia a cláusula 3.</p>
+        <p><b>Cláusula 5.</b> A palavra "gratuito" será interpretada como "gratuito por 7 dias, depois R$ 89,90".</p>
+        <p><b>Cláusula 6.</b> O suporte atende de terça a terça, exceto às terças.</p>
+        <p><b>Cláusula 7.</b> Fica eleito o foro da comarca de Marte para dirimir qualquer dúvida.</p>
+        <p><b>Cláusula 8.</b> Se chegou até aqui, você é a primeira pessoa da história a ler os termos. Parabéns.</p>
+      </div>
+      <div class="linha-acao"><button id="aceitar" type="button" disabled>Li e concordo</button><span id="lido">Lido: 0%</span></div>
+      <p class="status" id="s2" aria-live="polite"></p>
+      <span class="carimbo">PENDENTE</span>
+    </section>
+
+    <section class="campo" id="c3">
+      <header><span class="num">Campo 03 · Ponteiro</span><h2>A seta que clica pela cauda</h2></header>
+      <p class="lei">Marque as três caixas. Dentro do quadro, o clique sai da parte de trás da seta, longe da ponta.</p>
+      <div class="palco zona" id="zona3">
+        <span class="rotulo" style="left:29%;top:13%">via 1</span>
+        <button type="button" class="alvo quadrinho" style="left:22%;top:12%" aria-label="Assinar primeira via"></button>
+        <span class="rotulo" style="left:71%;top:43%">via 2</span>
+        <button type="button" class="alvo quadrinho" style="left:64%;top:42%" aria-label="Assinar segunda via"></button>
+        <span class="rotulo" style="left:39%;top:78%">via 3</span>
+        <button type="button" class="alvo quadrinho" style="left:32%;top:77%" aria-label="Assinar terceira via"></button>
+        <svg class="seta" viewBox="0 0 34 44" hidden aria-hidden="true"><path d="M2 2 L2 33 L10 26 L16 40 L23 37 L17 23 L28 23 Z"></path></svg>
+      </div>
+      <div class="linha-acao"><button id="virar" type="button">Virar a seta ao contrário</button><span id="perdidos">Cliques perdidos: 0</span></div>
+      <p class="status" id="s3" aria-live="polite">Os pontos vermelhos mostram onde seus cliques caíram.</p>
+      <span class="carimbo">PENDENTE</span>
+    </section>
+
+    <section class="campo" id="c4">
+      <header><span class="num">Campo 04 · Ponteiro</span><h2>Mouse no espelho</h2></header>
+      <p class="lei">Dentro do quadro, a seta anda ao contrário nos dois eixos. Foi para a direita, ela vai para a esquerda. Clique em Protocolar.</p>
+      <div class="palco zona" id="zona4">
+        <button type="button" class="alvo" data-tipo="certo" style="left:12%;top:14%">Protocolar</button>
+        <button type="button" class="alvo" data-tipo="errado" style="left:50%;top:32%">Arquivar para sempre</button>
+        <button type="button" class="alvo" data-tipo="errado" style="left:14%;top:68%">Enviar ao estagiário</button>
+        <svg class="seta" viewBox="0 0 34 44" hidden aria-hidden="true"><path d="M2 2 L2 33 L10 26 L16 40 L23 37 L17 23 L28 23 Z"></path></svg>
+      </div>
+      <p class="status" id="s4" aria-live="polite"></p>
+      <span class="carimbo">PENDENTE</span>
+    </section>
+
+    <section class="campo" id="c5">
+      <header><span class="num">Campo 05 · Botões</span><h2>Cancelar é um exercício físico</h2></header>
+      <p class="lei">Cancele sua assinatura. O link de cancelamento tem medo de você, mas ele cansa.</p>
+      <div class="palco fuga" id="fuga">
+        <button id="manter" type="button">Continuar aproveitando o Plano Premium Plus</button>
+        <button id="fugitivo" type="button" style="left:40%;top:60%">cancelar assinatura</button>
+      </div>
+      <p class="status" id="s5" aria-live="polite"></p>
+      <span class="carimbo">PENDENTE</span>
+    </section>
+
+    <section class="campo" id="c6">
+      <header><span class="num">Campo 06 · Telefone</span><h2>Celular por barra deslizante</h2></header>
+      <p class="lei">Arraste até o seu número. Cada pixel vale alguns milhões de telefones. As setas do teclado somam um por vez, boa sorte.</p>
+      <div class="palco fone">
+        <output id="foneSaida" for="fone"></output>
+        <input id="fone" type="range" min="11000000000" max="99999999999" step="1" value="19912345678" aria-label="Número de telefone">
+        <div class="linha-acao"><button id="foneOk" type="button">Este é o meu número</button></div>
+      </div>
+      <p class="status" id="s6" aria-live="polite"></p>
+      <span class="carimbo">PENDENTE</span>
+    </section>
+
+    <section class="campo" id="c7">
+      <header><span class="num">Campo 07 · Senha</span><h2>Senha com exigências crescentes</h2></header>
+      <p class="lei">Cada regra só aparece quando você cumpre a anterior.</p>
+      <div class="palco senha">
+        <label for="senha">Crie sua senha</label>
+        <input id="senha" type="text" autocomplete="off" spellcheck="false">
+        <ul class="regras" id="regras"></ul>
+      </div>
+      <p class="status" id="s7" aria-live="polite"></p>
+      <span class="carimbo">PENDENTE</span>
+    </section>
+
+    <section class="campo" id="c8">
+      <header><span class="num">Campo 08 · Nome</span><h2>Nome completo na roleta</h2></header>
+      <p class="lei">As letras passam em ordem aleatória. Pare na letra certa. Errou, apaga tudo. Salve com pelo menos 4 letras.</p>
+      <div class="palco roleta">
+        <div class="letra" id="letra" aria-hidden="true">A</div>
+        <div>
+          <div class="nome" id="nome" aria-label="Nome digitado"></div>
+          <div class="linha-acao">
+            <button id="parar" type="button">Parar</button>
+            <button id="apagar" type="button">Apagar tudo</button>
+            <button id="salvar" type="button">Salvar</button>
+          </div>
+        </div>
+      </div>
+      <p class="status" id="s8" aria-live="polite"></p>
+      <span class="carimbo">PENDENTE</span>
+    </section>
+
+    <section class="campo" id="c9">
+      <header><span class="num">Campo 09 · Volume</span><h2>Volume por gravidade</h2></header>
+      <p class="lei">Segure para inclinar a barra e a bolinha rolar. Mantenha na faixa azul, entre 65% e 85%, por um segundo. Passou da ponta, ela cai.</p>
+      <div class="palco volume">
+        <span class="valor" id="volValor">0%</span>
+        <div class="barra" id="barra"><span class="faixa"></span><span class="bola" id="bola"></span></div>
+      </div>
+      <div class="linha-acao"><button id="inclinar" type="button">Segure para inclinar</button></div>
+      <p class="status" id="s9" aria-live="polite"></p>
+      <span class="carimbo">PENDENTE</span>
+    </section>
+
+    <section class="campo" id="c10">
+      <header><span class="num">Campo 10 · Privacidade</span><h2>Preferências de cookies</h2></header>
+      <p class="lei">Desligue todas as chaves. Cada chave está ligada às vizinhas por motivos de transparência.</p>
+      <div class="palco cookies" id="cookies"></div>
+      <p class="status" id="s10" aria-live="polite"></p>
+      <span class="carimbo">PENDENTE</span>
+    </section>
+
+    <section class="campo" id="c11">
+      <header><span class="num">Campo 11 · Confirmação</span><h2>Dupla negação obrigatória</h2></header>
+      <p class="lei">Responda com atenção. Os botões trocam de lugar, e nenhuma resposta significa o que parece.</p>
+      <div class="palco dialogo">
+        <p id="pergunta"></p>
+        <div class="linha-acao" id="respostas"></div>
+      </div>
+      <p class="status" id="s11" aria-live="polite"></p>
+      <span class="carimbo">PENDENTE</span>
+    </section>
+
+    <section class="campo" id="c12">
+      <header><span class="num">Campo 12 · Envio</span><h2>Barra de progresso sincera demais</h2></header>
+      <p class="lei">Envie o requerimento e acompanhe. O botão Acelerar faz exatamente o que uma repartição faria.</p>
+      <div class="palco progresso">
+        <div class="pct" id="pct">0%</div>
+        <div class="trilho"><i id="trilho"></i></div>
+        <div class="recado" id="recado">Nada enviado até agora.</div>
+        <div class="linha-acao"><button id="enviar" type="button">Enviar</button><button id="acelerar" type="button" disabled>Acelerar</button></div>
+      </div>
+      <p class="status" id="s12" aria-live="polite"></p>
+      <span class="carimbo">PENDENTE</span>
+    </section>
+
+  </div>
+  <p class="rodape">Esta repartição não existe. Os padrões daqui existem: cancelamento escondido, consentimento confuso e progresso falso aparecem em sites reais com menos humor.</p>
+</div>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const feitos = new Set();
+  const fila = $('fila');
+  for (let i = 0; i < 12; i++) fila.appendChild(document.createElement('i'));
+
+  function carimbar(n, msg) {
+    if (msg) $('s' + n).textContent = msg;
+    if (feitos.has(n)) return;
+    feitos.add(n);
+    const campo = $('c' + n);
+    campo.classList.add('feito');
+    campo.querySelector('.carimbo').textContent = 'DEFERIDO';
+    $('conta').textContent = feitos.size + ' de 12 carimbos';
+    [...fila.children].forEach((el, i) => el.classList.toggle('ok', i < feitos.size));
+    const pareceres = ['Situação: em análise.', 'Situação: em análise pelo colega que saiu de férias.', 'Situação: falta reconhecer firma.'];
+    $('parecer').textContent = feitos.size === 12
+      ? 'Processo deferido. Prazo de análise: 90 dias úteis. Volte amanhã com uma cópia.'
+      : pareceres[feitos.size % pareceres.length];
+  }
+
+  /* 01 Relógio */
+  (function () {
+    const svg = $('relogio'), marcas = $('marcas');
+    const NS = 'http://www.w3.org/2000/svg';
+    for (let h = 0; h < 24; h++) {
+      const a = (h * 15 - 90) * Math.PI / 180;
+      const t = document.createElementNS(NS, 'line');
+      const r1 = h % 3 === 0 ? 96 : 102;
+      t.setAttribute('x1', 120 + Math.cos(a) * r1); t.setAttribute('y1', 120 + Math.sin(a) * r1);
+      t.setAttribute('x2', 120 + Math.cos(a) * 110); t.setAttribute('y2', 120 + Math.sin(a) * 110);
+      t.setAttribute('class', 'tick'); marcas.appendChild(t);
+      if (h % 3 === 0) {
+        const l = document.createElementNS(NS, 'text');
+        l.setAttribute('x', 120 + Math.cos(a) * 80); l.setAttribute('y', 120 + Math.sin(a) * 80);
+        l.textContent = h; marcas.appendChild(l);
+      }
+    }
+    const agora = new Date();
+    const y = agora.getFullYear(), m = agora.getMonth(), d = agora.getDate();
+    const alvo = new Date(y, m, d + 3);
+    const fmt = (dt) => dt.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+    $('alvoData').textContent = fmt(alvo);
+    let horas = agora.getHours() + agora.getMinutes() / 60;
+
+    function pinta() {
+      const dia = Math.floor(horas / 24);
+      const resto = horas - dia * 24;
+      const dt = new Date(y, m, d + dia);
+      $('ponteiro').setAttribute('transform', 'rotate(' + (resto * 15) + ' 120 120)');
+      const hh = Math.floor(resto), mm = Math.floor((resto - hh) * 60);
+      const hora = String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
+      $('dataLida').textContent = fmt(dt);
+      $('horaLida').textContent = hora + ' · ' + dt.toLocaleDateString('pt-BR');
+      svg.setAttribute('aria-valuetext', fmt(dt) + ', ' + hora);
+      if (dt.getTime() === alvo.getTime()) carimbar(1, 'Data aceita. Agora marque a devolução para o ano que vem.');
+    }
+    const ang = (e) => {
+      const r = svg.getBoundingClientRect();
+      return Math.atan2(e.clientY - r.top - r.height / 2, e.clientX - r.left - r.width / 2) * 180 / Math.PI;
+    };
+    let ultimo = null;
+    svg.addEventListener('pointerdown', (e) => { ultimo = ang(e); svg.setPointerCapture(e.pointerId); });
+    svg.addEventListener('pointermove', (e) => {
+      if (ultimo === null) return;
+      const a = ang(e);
+      let delta = a - ultimo;
+      if (delta > 180) delta -= 360;
+      if (delta < -180) delta += 360;
+      ultimo = a; horas += delta / 15; pinta();
+    });
+    const solta = () => { ultimo = null; };
+    svg.addEventListener('pointerup', solta);
+    svg.addEventListener('pointercancel', solta);
+    svg.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { horas += 1; pinta(); e.preventDefault(); }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { horas -= 1; pinta(); e.preventDefault(); }
+    });
+    pinta();
+  })();
+
+  /* 02 Rolagem invertida */
+  (function () {
+    const t = $('termos');
+    function lido() {
+      const max = t.scrollHeight - t.clientHeight;
+      const p = max > 0 ? Math.round(t.scrollTop / max * 100) : 100;
+      $('lido').textContent = 'Lido: ' + p + '%';
+      if (p >= 98) $('aceitar').disabled = false;
+    }
+    t.addEventListener('wheel', (e) => { e.preventDefault(); t.scrollTop -= e.deltaY; lido(); }, { passive: false });
+    let ty = null;
+    t.addEventListener('touchstart', (e) => { ty = e.touches[0].clientY; }, { passive: true });
+    t.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      const y = e.touches[0].clientY;
+      t.scrollTop += y - ty; ty = y; lido();
+    }, { passive: false });
+    t.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') { t.scrollTop -= 40; e.preventDefault(); lido(); }
+      if (e.key === 'ArrowUp') { t.scrollTop += 40; e.preventDefault(); lido(); }
+    });
+    $('aceitar').addEventListener('click', () => carimbar(2, 'Concordância registrada. Você também concordou com a cláusula 3.'));
+  })();
+
+  /* Base das zonas com seta falsa */
+  function zona(el, op) {
+    const seta = el.querySelector('.seta');
+    function ponto(e) {
+      const r = el.getBoundingClientRect();
+      return op.mapa(e.clientX - r.left, e.clientY - r.top, r, e.pointerType);
+    }
+    function move(p) {
+      seta.hidden = false;
+      seta.style.left = (p.x - op.ax) + 'px';
+      seta.style.top = (p.y - op.ay) + 'px';
+    }
+    el.addEventListener('pointermove', (e) => move(ponto(e)));
+    el.addEventListener('pointerleave', () => { seta.hidden = true; });
+    el.addEventListener('pointerdown', (e) => {
+      const p = ponto(e); move(p);
+      const z = el.getBoundingClientRect();
+      const alvo = [...el.querySelectorAll('.alvo')].find((b) => {
+        const r = b.getBoundingClientRect();
+        const x = p.x + z.left, y = p.y + z.top;
+        return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+      });
+      op.clique(alvo, p);
+    });
+    el.querySelectorAll('.alvo').forEach((b) => b.addEventListener('click', () => op.clique(b)));
+    return seta;
+  }
+
+  /* 03 Clique pela cauda */
+  (function () {
+    const el = $('zona3');
+    let perdidos = 0;
+    const seta = zona(el, {
+      ax: 20, ay: 39,
+      mapa: (x, y, r, tipo) => tipo === 'mouse' ? { x, y } : { x: x + 30, y: y + 30 },
+      clique(alvo, p) {
+        if (alvo) {
+          alvo.classList.add('ok');
+          const faltam = el.querySelectorAll('.quadrinho:not(.ok)').length;
+          if (!faltam) carimbar(3, 'Três vias assinadas. Ninguém vai conseguir ler a sua assinatura.');
+          else $('s3').textContent = 'Via assinada. Faltam ' + faltam + '.';
+        } else if (p) {
+          perdidos++;
+          $('perdidos').textContent = 'Cliques perdidos: ' + perdidos;
+          const m = document.createElement('span');
+          m.className = 'erro'; m.style.left = p.x + 'px'; m.style.top = p.y + 'px';
+          el.appendChild(m);
+          const marcas = el.querySelectorAll('.erro');
+          if (marcas.length > 12) marcas[0].remove();
+        }
+      }
+    });
+    seta.style.transformOrigin = '20px 39px';
+    let virada = false;
+    $('virar').addEventListener('click', () => {
+      virada = !virada;
+      seta.style.transform = virada ? 'rotate(180deg)' : '';
+      $('virar').textContent = virada ? 'Desvirar a seta' : 'Virar a seta ao contrário';
+    });
+  })();
+
+  /* 04 Mouse espelhado */
+  zona($('zona4'), {
+    ax: 2, ay: 2,
+    mapa: (x, y, r) => ({ x: r.width - x, y: r.height - y }),
+    clique(alvo) {
+      if (!alvo) return;
+      if (alvo.dataset.tipo === 'certo') carimbar(4, 'Protocolado. Número do protocolo: invertido.');
+      else $('s4').textContent = alvo.textContent + ': ação registrada. Para desfazer, compareça pessoalmente.';
+    }
+  });
+
+  /* 05 Botão fugitivo */
+  (function () {
+    const palco = $('fuga'), b = $('fugitivo');
+    const LIMITE = 9;
+    let fugas = 0, manteve = 0;
+    function foge() {
+      if (fugas >= LIMITE) return;
+      fugas++;
+      const w = palco.clientWidth - b.offsetWidth - 8, h = palco.clientHeight - b.offsetHeight - 66;
+      b.style.left = (4 + Math.random() * Math.max(w, 1)) + 'px';
+      b.style.top = (62 + Math.random() * Math.max(h, 1)) + 'px';
+      if (fugas === LIMITE) { b.textContent = 'cansei, pode clicar'; $('s5').textContent = 'O link parou para respirar.'; }
+    }
+    palco.addEventListener('pointermove', (e) => {
+      const r = b.getBoundingClientRect();
+      const d = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2));
+      if (d < 90) foge();
+    });
+    b.addEventListener('pointerdown', (e) => { if (fugas < LIMITE) { e.preventDefault(); foge(); } });
+    b.addEventListener('click', () => carimbar(5, 'Cancelamento recebido. Sua assinatura termina em 2041.'));
+    $('manter').addEventListener('click', () => {
+      manteve++;
+      $('s5').textContent = 'Obrigado! Plano renovado por mais ' + (manteve * 12) + ' meses.';
+    });
+  })();
+
+  /* 06 Telefone */
+  (function () {
+    const r = $('fone');
+    function pinta() {
+      const n = String(r.value).padStart(11, '0');
+      $('foneSaida').textContent = '(' + n.slice(0, 2) + ') ' + n.slice(2, 7) + '-' + n.slice(7);
+    }
+    r.addEventListener('input', pinta);
+    $('foneOk').addEventListener('click', () => carimbar(6, 'Enviamos um código para ' + $('foneSaida').textContent + '. Pergunte a essa pessoa.'));
+    pinta();
+  })();
+
+  /* 07 Senha */
+  (function () {
+    const regras = [
+      ['Pelo menos 8 caracteres.', (s) => s.length >= 8],
+      ['Uma letra maiúscula.', (s) => /[A-ZÀ-Ú]/.test(s)],
+      ['O nome de um mês.', (s) => /janeiro|fevereiro|mar[cç]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro/i.test(s)],
+      ['Os algarismos precisam somar 13.', (s) => (s.match(/\d/g) || []).reduce((a, c) => a + Number(c), 0) === 13],
+      ['Uma destas frutas: pequi, caju ou jaca.', (s) => /pequi|caju|jaca/i.test(s)],
+      ['Nenhuma letra A. Motivo: sim.', (s) => !/[aáàâã]/i.test(s)]
+    ];
+    function pinta() {
+      const s = $('senha').value;
+      const lista = $('regras');
+      lista.textContent = '';
+      let todas = true;
+      for (const [txt, ok] of regras) {
+        const li = document.createElement('li');
+        li.textContent = txt;
+        const passou = ok(s);
+        li.classList.toggle('ok', passou);
+        lista.appendChild(li);
+        if (!passou) { todas = false; break; }
+      }
+      if (todas) carimbar(7, 'Senha aceita. Ela já é usada pelo Sr. Waldemar, do 3º andar, mas tudo bem.');
+    }
+    $('senha').addEventListener('input', pinta);
+    pinta();
+  })();
+
+  /* 08 Roleta de letras */
+  (function () {
+    const abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ '.split('');
+    for (let i = abc.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [abc[i], abc[j]] = [abc[j], abc[i]];
+    }
+    let i = 0;
+    const lento = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setInterval(() => {
+      i = (i + 1) % abc.length;
+      $('letra').textContent = abc[i] === ' ' ? '␣' : abc[i];
+    }, lento ? 600 : 170);
+    $('parar').addEventListener('click', () => { $('nome').textContent += abc[i]; });
+    $('apagar').addEventListener('click', () => { $('nome').textContent = ''; $('s8').textContent = 'Nome apagado. Tudo.'; });
+    $('salvar').addEventListener('click', () => {
+      const nome = $('nome').textContent.trim();
+      if (nome.length < 4) { $('s8').textContent = 'Nome muito curto. Faltam letras: ' + (4 - nome.length) + '.'; return; }
+      carimbar(8, 'Cadastro salvo como ' + nome + '. Confere com o seu RG? Agora é tarde.');
+    });
+  })();
+
+  /* 09 Volume */
+  (function () {
+    const barra = $('barra'), bola = $('bola'), b = $('inclinar');
+    let x = 0, v = 0, ang = -7, segura = false, naFaixa = 0, t0 = 0;
+    const liga = (e) => { segura = true; if (e.pointerId !== undefined) { try { b.setPointerCapture(e.pointerId); } catch (_) {} } };
+    const desliga = () => { segura = false; };
+    b.addEventListener('pointerdown', liga);
+    b.addEventListener('pointerup', desliga);
+    b.addEventListener('pointercancel', desliga);
+    b.addEventListener('keydown', (e) => { if (e.key === ' ' || e.key === 'Enter') { segura = true; e.preventDefault(); } });
+    b.addEventListener('keyup', desliga);
+    b.addEventListener('blur', desliga);
+    function passo(t) {
+      const dt = Math.min((t - t0) / 16.67, 3) || 1; t0 = t;
+      const destino = segura ? 12 : -7;
+      ang += (destino - ang) * 0.09 * dt;
+      v += Math.sin(ang * Math.PI / 180) * 0.0011 * dt;
+      v *= Math.pow(0.985, dt);
+      x += v * dt;
+      if (x < 0) { x = 0; v = 0; }
+      if (x > 1.03) { x = 0; v = 0; naFaixa = 0; $('s9').textContent = 'A bolinha caiu. O volume voltou a zero.'; }
+      barra.style.transform = 'rotate(' + ang.toFixed(2) + 'deg)';
+      bola.style.left = Math.min(x, 1.03) * 100 + '%';
+      const p = Math.round(Math.min(x, 1) * 100);
+      $('volValor').textContent = p + '%';
+      if (p >= 65 && p <= 85) {
+        naFaixa += dt * 16.67;
+        if (naFaixa > 1000) carimbar(9, 'Volume ajustado. Sua música já acabou.');
+      } else naFaixa = 0;
+      requestAnimationFrame(passo);
+    }
+    requestAnimationFrame(passo);
+  })();
+
+  /* 10 Cookies: desligar uma chave inverte as vizinhas */
+  (function () {
+    const nomes = ['Cookies essenciais', 'Cookies de polvilho', 'Rastrear seus sonhos', 'Vender a senha do Wi-Fi', 'Avisar a sua mãe', 'Ler suas conversas com a sogra'];
+    const est = nomes.map(() => true);
+    const box = $('cookies');
+    const botoes = nomes.map((n, i) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'chave'; b.setAttribute('role', 'switch');
+      const s = document.createElement('span'); s.textContent = n;
+      b.append(s, document.createElement('i'));
+      b.addEventListener('click', () => {
+        [i - 1, i, i + 1].forEach((k) => { if (k >= 0 && k < est.length) est[k] = !est[k]; });
+        pinta();
+      });
+      box.appendChild(b);
+      return b;
+    });
+    function pinta() {
+      botoes.forEach((b, i) => b.setAttribute('aria-checked', String(est[i])));
+      if (est.every((v) => !v)) carimbar(10, 'Tudo desligado. Suas preferências valem até o próximo carregamento.');
+      else if (!feitos.has(10)) $('s10').textContent = 'Ligadas: ' + est.filter(Boolean).length + ' de 6.';
+    }
+    pinta();
+  })();
+
+  /* 11 Dupla negação */
+  (function () {
+    const perguntas = [
+      ['Deseja não cancelar a desistência do cancelamento?', 'Sim, não quero', 'Não, quero sim'],
+      ['Tem certeza de que não está incerto?', 'Não tenho', 'Tenho que não'],
+      ['Se não concorda em discordar, clique em não discordar.', 'Não discordar', 'Discordar de não'],
+      ['Clique em Cancelar para confirmar, ou em Confirmar para cancelar.', 'Cancelar', 'Confirmar']
+    ];
+    let i = 0;
+    function pinta() {
+      const [q, a, b] = perguntas[i];
+      $('pergunta').textContent = q;
+      const box = $('respostas');
+      box.textContent = '';
+      (i % 2 ? [b, a] : [a, b]).forEach((txt) => {
+        const bt = document.createElement('button');
+        bt.type = 'button'; bt.textContent = txt;
+        bt.addEventListener('click', responde);
+        box.appendChild(bt);
+      });
+    }
+    function responde() {
+      i++;
+      if (i < perguntas.length) { pinta(); $('s11').textContent = 'Resposta ' + i + ' de ' + perguntas.length + ' registrada como: talvez.'; return; }
+      i = 0; pinta();
+      carimbar(11, 'Decisão registrada: o contrário do que você pensou.');
+    }
+    pinta();
+  })();
+
+  /* 12 Progresso */
+  (function () {
+    const recados = ['Faltam 3 minutos.', 'Faltam 4 horas.', 'Faltam 2 minutos.', 'Faltam 11 dias.', 'Reconhecendo firma.', 'Aguardando o estagiário voltar do almoço.', 'Faltam 40 segundos.', 'Faltam 40 segundos.', 'Faltam 40 segundos.'];
+    let pct = 0, timer = null, voltou = false, r = 0;
+    const pinta = (txt) => {
+      $('pct').textContent = txt || Math.floor(pct) + '%';
+      $('trilho').style.width = Math.min(pct, 100) + '%';
+    };
+    function zeno() {
+      let n = 1;
+      $('acelerar').disabled = true;
+      const fim = setInterval(() => {
+        pinta('99,' + '9'.repeat(n) + '%');
+        n++;
+        if (n > 7) {
+          clearInterval(fim); pct = 100; pinta();
+          $('recado').textContent = 'Erro 0: nenhum erro. Por favor, envie novamente.';
+          $('enviar').disabled = false;
+          carimbar(12, 'Envio concluído e perdido, nessa ordem.');
+        }
+      }, 700);
+    }
+    $('enviar').addEventListener('click', () => {
+      pct = 0; voltou = false; pinta();
+      $('enviar').disabled = true; $('acelerar').disabled = false;
+      clearInterval(timer);
+      timer = setInterval(() => {
+        pct += (100 - pct) * 0.07 + Math.random();
+        if (pct > 60 && !voltou) { voltou = true; pct = 38; $('recado').textContent = 'Encontramos mais trabalho.'; }
+        else if (Math.random() < 0.18) { $('recado').textContent = recados[r++ % recados.length]; }
+        if (pct >= 99) { pct = 99; pinta(); clearInterval(timer); $('recado').textContent = 'Quase.'; zeno(); return; }
+        pinta();
+      }, 300);
+    });
+    $('acelerar').addEventListener('click', () => {
+      pct = Math.max(0, pct - 5); pinta();
+      $('recado').textContent = 'Pedido de urgência anexado. A fila agora inclui o seu pedido.';
+    });
+  })();
+})();
+</script>
+</body>
+</html>
