@@ -147,6 +147,13 @@ h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
 .fone { padding: 16px 12px; display: grid; gap: 12px; }
 .fone output { font: 400 clamp(21px, 4vw, 28px)/1.2 var(--display); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 .fone input { width: 100%; accent-color: var(--vermelho); }
+.fone output b { color: var(--azul); font-weight: 400; }
+.pedido { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; font-size: 14px; }
+.pedido b { font-size: 18px; font-variant-numeric: tabular-nums; }
+.cronometro { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 8px; align-items: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+.cronometro .trilho { height: 14px; }
+.cronometro .trilho i { width: 100%; background: var(--vermelho); }
+#foneZoom { font-size: 14px; font-variant-numeric: tabular-nums; }
 
 /* Senha */
 .senha { padding: 12px; display: grid; gap: 10px; }
@@ -302,11 +309,14 @@ h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
 
     <section class="campo" id="c6">
       <header><span class="num">Campo 06 · Telefone</span><h2>Celular por barra deslizante</h2></header>
-      <p class="lei">Arraste até o seu número. Cada pixel vale alguns milhões de telefones. As setas do teclado somam um por vez, boa sorte.</p>
+      <p class="lei">Você tem 30 segundos para achar o número sorteado. Arraste a barra, aproxime o zoom e repita até acertar os 11 dígitos. Ligar para o número errado custa 3 segundos.</p>
       <div class="palco fone">
+        <div class="pedido"><span>Ligue para</span> <b id="foneAlvo">(??) ?????-????</b></div>
+        <div class="cronometro"><span id="foneTempo">30,0 s</span><div class="trilho"><i id="foneTrilho"></i></div></div>
         <output id="foneSaida" for="fone"></output>
-        <input id="fone" type="range" min="11000000000" max="99999999999" step="1" value="19912345678" aria-label="Número de telefone">
-        <div class="linha-acao"><button id="foneOk" type="button">Este é o meu número</button></div>
+        <input id="fone" type="range" min="11000000000" max="99999999999" step="1" value="19912345678" aria-label="Número de telefone" disabled>
+        <div class="linha-acao"><button id="foneMais" type="button" disabled>Aproximar ×100</button><button id="foneMenos" type="button" disabled>Afastar</button><span id="foneZoom">Zoom: 1×</span></div>
+        <div class="linha-acao"><button id="foneComecar" type="button">Começar</button><button id="foneOk" type="button" disabled>Ligar</button></div>
       </div>
       <p class="status" id="s6" aria-live="polite"></p>
       <span class="carimbo">PENDENTE</span>
@@ -597,13 +607,75 @@ h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
 
   /* 06 Telefone */
   (function () {
-    const r = $('fone');
+    const MIN = 11000000000, MAX = 99999999999, TOTAL = 30000;
+    const r = $('fone'), saida = $('foneSaida');
+    const ZOOM = [MAX - MIN, 890000000, 8900000, 89000, 890, 8];
+    const fmt = (s) => '(' + s.slice(0, 2) + ') ' + s.slice(2, 7) + '-' + s.slice(7);
+    let alvo = '', nivel = 0, fim = 0, timer = null;
+
     function pinta() {
-      const n = String(r.value).padStart(11, '0');
-      $('foneSaida').textContent = '(' + n.slice(0, 2) + ') ' + n.slice(2, 7) + '-' + n.slice(7);
+      const atual = String(r.value);
+      const texto = fmt(atual);
+      let certos = 0;
+      if (alvo) while (certos < 11 && atual[certos] === alvo[certos]) certos++;
+      let corte = 0, vistos = 0;
+      while (vistos < certos) { if (/\d/.test(texto[corte])) vistos++; corte++; }
+      const b = document.createElement('b');
+      b.textContent = texto.slice(0, corte);
+      saida.textContent = '';
+      saida.append(b, texto.slice(corte));
+    }
+    function janela(centro) {
+      const w = ZOOM[nivel];
+      const lo = Math.min(Math.max(MIN, Math.round(centro - w / 2)), MAX - w);
+      r.min = lo; r.max = lo + w; r.value = centro;
+      $('foneZoom').textContent = 'Zoom: ' + Math.pow(100, nivel).toLocaleString('pt-BR') + '×';
+      $('foneMais').disabled = nivel === ZOOM.length - 1 || !alvo;
+      $('foneMenos').disabled = nivel === 0 || !alvo;
+      pinta();
+    }
+    function tempo() {
+      const resta = Math.max(0, fim - performance.now());
+      $('foneTempo').textContent = (resta / 1000).toFixed(1).replace('.', ',') + ' s';
+      $('foneTrilho').style.width = (resta / TOTAL * 100) + '%';
+      if (resta <= 0) encerra('Tempo esgotado. O número mudou de dono.', 'Tentar de novo');
+    }
+    function encerra(msg, rotulo) {
+      clearInterval(timer);
+      alvo = '';
+      r.disabled = true; $('foneOk').disabled = true;
+      $('foneMais').disabled = true; $('foneMenos').disabled = true;
+      $('foneComecar').disabled = false; $('foneComecar').textContent = rotulo;
+      pinta();
+      if (msg) $('s6').textContent = msg;
     }
     r.addEventListener('input', pinta);
-    $('foneOk').addEventListener('click', () => carimbar(6, 'Enviamos um código para ' + $('foneSaida').textContent + '. Pergunte a essa pessoa.'));
+    $('foneMais').addEventListener('click', () => { nivel++; janela(Number(r.value)); });
+    $('foneMenos').addEventListener('click', () => { nivel--; janela(Number(r.value)); });
+    $('foneComecar').addEventListener('click', () => {
+      const ddd = 11 + Math.floor(Math.random() * 89);
+      alvo = ddd + '9' + String(Math.floor(Math.random() * 1e8)).padStart(8, '0');
+      $('foneAlvo').textContent = fmt(alvo);
+      nivel = 0;
+      r.disabled = false; $('foneOk').disabled = false; $('foneComecar').disabled = true;
+      janela(Math.round((MIN + MAX) / 2));
+      $('s6').textContent = 'Valendo. Os dígitos certos ficam azuis.';
+      fim = performance.now() + TOTAL;
+      clearInterval(timer);
+      timer = setInterval(tempo, 100);
+      tempo();
+    });
+    $('foneOk').addEventListener('click', () => {
+      if (String(r.value) === alvo) {
+        const sobrou = $('foneTempo').textContent;
+        encerra('', 'Jogar de novo');
+        carimbar(6, 'Chamando. Sobraram ' + sobrou + '. A ligação caiu na caixa postal.');
+      } else {
+        fim -= 3000;
+        $('s6').textContent = 'Número errado. Quem atendeu foi o Sr. Waldemar. Menos 3 segundos.';
+        tempo();
+      }
+    });
     pinta();
   })();
 
