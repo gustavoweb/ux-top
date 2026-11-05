@@ -153,7 +153,7 @@ h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
 .cronometro { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 8px; align-items: center; font-weight: 700; font-variant-numeric: tabular-nums; }
 .cronometro .trilho { height: 14px; }
 .cronometro .trilho i { width: 100%; background: var(--vermelho); }
-#foneZoom { font-size: 14px; font-variant-numeric: tabular-nums; }
+#foneBloco { font-size: 14px; font-variant-numeric: tabular-nums; }
 
 /* Senha */
 .senha { padding: 12px; display: grid; gap: 10px; }
@@ -309,14 +309,14 @@ h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
 
     <section class="campo" id="c6">
       <header><span class="num">Campo 06 · Telefone</span><h2>Celular por barra deslizante</h2></header>
-      <p class="lei">Você tem 30 segundos para achar o número sorteado. Arraste a barra, aproxime o zoom e repita até acertar os 11 dígitos. Ligar para o número errado custa 3 segundos.</p>
+      <p class="lei">Você tem 30 segundos para discar o número sorteado. A barra acerta dois dígitos por vez: pare no valor certo, solte, e o bloco trava. Use +1 e −1 para o ajuste fino.</p>
       <div class="palco fone">
         <div class="pedido"><span>Ligue para</span> <b id="foneAlvo">(??) ?????-????</b></div>
         <div class="cronometro"><span id="foneTempo">30,0 s</span><div class="trilho"><i id="foneTrilho"></i></div></div>
         <output id="foneSaida" for="fone"></output>
         <input id="fone" type="range" min="11000000000" max="99999999999" step="1" value="19912345678" aria-label="Número de telefone" disabled>
-        <div class="linha-acao"><button id="foneMais" type="button" disabled>Aproximar ×100</button><button id="foneMenos" type="button" disabled>Afastar</button><span id="foneZoom">Zoom: 1×</span></div>
-        <div class="linha-acao"><button id="foneComecar" type="button">Começar</button><button id="foneOk" type="button" disabled>Ligar</button></div>
+        <div class="linha-acao"><button id="foneMenos" type="button" aria-label="Diminuir um" disabled>−1</button><button id="foneMais" type="button" aria-label="Aumentar um" disabled>+1</button><span id="foneBloco">Bloco 1 de 5</span></div>
+        <div class="linha-acao"><button id="foneComecar" type="button">Começar</button></div>
       </div>
       <p class="status" id="s6" aria-live="polite"></p>
       <span class="carimbo">PENDENTE</span>
@@ -607,32 +607,55 @@ h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
 
   /* 06 Telefone */
   (function () {
-    const MIN = 11000000000, MAX = 99999999999, TOTAL = 30000;
+    const TOTAL = 30000;
+    const BLOCOS = [[0, 2], [3, 5], [5, 7], [7, 9], [9, 11]];
     const r = $('fone'), saida = $('foneSaida');
-    const ZOOM = [MAX - MIN, 890000000, 8900000, 89000, 890, 8];
     const fmt = (s) => '(' + s.slice(0, 2) + ') ' + s.slice(2, 7) + '-' + s.slice(7);
-    let alvo = '', nivel = 0, fim = 0, timer = null;
+    const doisDigitos = () => String(r.value).padStart(2, '0');
+    let alvo = '', bloco = 0, fim = 0, timer = null;
 
-    function pinta() {
-      const atual = String(r.value);
-      const texto = fmt(atual);
-      let certos = 0;
-      if (alvo) while (certos < 11 && atual[certos] === alvo[certos]) certos++;
+    r.min = 0; r.max = 99; r.value = 0;
+
+    function mostra(digitos, travados) {
+      const texto = fmt(digitos);
       let corte = 0, vistos = 0;
-      while (vistos < certos) { if (/\d/.test(texto[corte])) vistos++; corte++; }
+      while (vistos < travados) { if (/[\d_]/.test(texto[corte])) vistos++; corte++; }
       const b = document.createElement('b');
       b.textContent = texto.slice(0, corte);
       saida.textContent = '';
       saida.append(b, texto.slice(corte));
     }
-    function janela(centro) {
-      const w = ZOOM[nivel];
-      const lo = Math.min(Math.max(MIN, Math.round(centro - w / 2)), MAX - w);
-      r.min = lo; r.max = lo + w; r.value = centro;
-      $('foneZoom').textContent = 'Zoom: ' + Math.pow(100, nivel).toLocaleString('pt-BR') + '×';
-      $('foneMais').disabled = nivel === ZOOM.length - 1 || !alvo;
-      $('foneMenos').disabled = nivel === 0 || !alvo;
+    function pinta() {
+      const c = Array(11).fill('_');
+      if (!alvo) { mostra(c.join(''), 0); return; }
+      const [a, z] = BLOCOS[bloco];
+      for (let i = 0; i < a; i++) c[i] = alvo[i];
+      c[2] = '9';
+      const s = doisDigitos();
+      c[a] = s[0]; c[z - 1] = s[1];
+      $('foneBloco').textContent = 'Bloco ' + (bloco + 1) + ' de ' + BLOCOS.length;
+      mostra(c.join(''), a);
+    }
+    function confere() {
+      if (!alvo) return;
+      const [a, z] = BLOCOS[bloco];
+      if (doisDigitos() !== alvo.slice(a, z)) return;
+      if (bloco === BLOCOS.length - 1) {
+        const numero = alvo, sobrou = $('foneTempo').textContent;
+        encerra('', 'Jogar de novo');
+        mostra(numero, 11);
+        carimbar(6, 'Chamando. Sobraram ' + sobrou + '. A ligação caiu na caixa postal.');
+        return;
+      }
+      bloco++;
+      r.value = 0;
       pinta();
+      confere();
+    }
+    function soma(n) {
+      r.value = Number(r.value) + n;
+      pinta();
+      confere();
     }
     function tempo() {
       const resta = Math.max(0, fim - performance.now());
@@ -643,38 +666,31 @@ h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
     function encerra(msg, rotulo) {
       clearInterval(timer);
       alvo = '';
-      r.disabled = true; $('foneOk').disabled = true;
+      r.disabled = true;
       $('foneMais').disabled = true; $('foneMenos').disabled = true;
       $('foneComecar').disabled = false; $('foneComecar').textContent = rotulo;
       pinta();
       if (msg) $('s6').textContent = msg;
     }
     r.addEventListener('input', pinta);
-    $('foneMais').addEventListener('click', () => { nivel++; janela(Number(r.value)); });
-    $('foneMenos').addEventListener('click', () => { nivel--; janela(Number(r.value)); });
+    r.addEventListener('change', confere);
+    $('foneMais').addEventListener('click', () => soma(1));
+    $('foneMenos').addEventListener('click', () => soma(-1));
     $('foneComecar').addEventListener('click', () => {
       const ddd = 11 + Math.floor(Math.random() * 89);
       alvo = ddd + '9' + String(Math.floor(Math.random() * 1e8)).padStart(8, '0');
       $('foneAlvo').textContent = fmt(alvo);
-      nivel = 0;
-      r.disabled = false; $('foneOk').disabled = false; $('foneComecar').disabled = true;
-      janela(Math.round((MIN + MAX) / 2));
-      $('s6').textContent = 'Valendo. Os dígitos certos ficam azuis.';
+      bloco = 0;
+      r.value = 0;
+      r.disabled = false; $('foneMais').disabled = false; $('foneMenos').disabled = false;
+      $('foneComecar').disabled = true;
+      pinta();
+      $('s6').textContent = 'Valendo. Blocos travados ficam azuis.';
       fim = performance.now() + TOTAL;
       clearInterval(timer);
       timer = setInterval(tempo, 100);
       tempo();
-    });
-    $('foneOk').addEventListener('click', () => {
-      if (String(r.value) === alvo) {
-        const sobrou = $('foneTempo').textContent;
-        encerra('', 'Jogar de novo');
-        carimbar(6, 'Chamando. Sobraram ' + sobrou + '. A ligação caiu na caixa postal.');
-      } else {
-        fim -= 3000;
-        $('s6').textContent = 'Número errado. Quem atendeu foi o Sr. Waldemar. Menos 3 segundos.';
-        tempo();
-      }
+      confere();
     });
     pinta();
   })();
