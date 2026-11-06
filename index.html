@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
+<style>body{margin:0}img{max-width:100%}</style>
 <title>Repartição da UX Hostil</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
-/* Layout: uma folha de formulário contínuo, com furos de trator e zebra verde. Cada campo é uma célula do requerimento e ganha um carimbo. */
+/* Layout: uma folha de formulário contínuo, com furos de trator e zebra verde. Cada guichê ocupa a folha inteira e ganha um carimbo. */
 :root {
   --papel: #f7f9ef;
   --zebra: #e2eed6;
@@ -20,21 +20,26 @@
   --vermelho: #c0202c;
   --azul: #1f3fa6;
   --sombra-furo: #c9d6c2;
+  --terminal: #14201a;
+  --terminal-tinta: #c9f2cf;
   --display: "Alfa Slab One", "Rockwell", Georgia, serif;
   --maquina: "Courier Prime", "Courier New", Courier, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --papel: #111a15; --zebra: #17231c; --tinta: #e4eee1; --apagado: #a0b3a6; --linha: #466054;
-    --superficie: #0c130f; --vermelho: #ff7078; --azul: #9db2ff; --sombra-furo: #050806; color-scheme: dark;
+    --superficie: #0c130f; --vermelho: #ff7078; --azul: #9db2ff; --sombra-furo: #050806;
+    --terminal: #050a07; --terminal-tinta: #c9f2cf; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --papel: #111a15; --zebra: #17231c; --tinta: #e4eee1; --apagado: #a0b3a6; --linha: #466054;
-  --superficie: #0c130f; --vermelho: #ff7078; --azul: #9db2ff; --sombra-furo: #050806; color-scheme: dark;
+  --superficie: #0c130f; --vermelho: #ff7078; --azul: #9db2ff; --sombra-furo: #050806;
+  --terminal: #050a07; --terminal-tinta: #c9f2cf; color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body {
   background: var(--papel); color: var(--tinta);
   font: 16px/1.5 var(--maquina);
@@ -43,7 +48,7 @@ body {
   padding-block: 24px 56px;
 }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--papel); }
-button, input { font: inherit; color: inherit; }
+button, input, textarea { font: inherit; color: inherit; }
 button {
   background: var(--superficie); border: 2px solid var(--tinta); padding: 8px 12px;
   font-weight: 700; cursor: pointer; box-shadow: 3px 3px 0 var(--tinta);
@@ -51,10 +56,13 @@ button {
 button:hover { background: var(--zebra); }
 button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--tinta); }
 button:disabled { opacity: .5; cursor: not-allowed; }
+.primario { background: var(--vermelho); color: var(--superficie); border-color: var(--tinta); }
+.primario:hover { background: var(--vermelho); }
 :focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+input[type="text"], textarea { width: 100%; padding: 8px; background: var(--papel); border: 2px solid var(--tinta); }
 
 .folha {
-  max-width: 1120px; margin-inline: auto; position: relative;
+  max-width: 860px; margin-inline: auto; position: relative;
   background: repeating-linear-gradient(var(--papel) 0 72px, var(--zebra) 72px 144px);
   padding-inline: 44px;
 }
@@ -65,49 +73,45 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .folha::before { left: 0; border-right: 2px dashed var(--linha); }
 .folha::after { right: 0; border-left: 2px dashed var(--linha); }
 
-.cabecalho { padding-block: 32px 24px; display: grid; gap: 12px; }
+.cabecalho { padding-block: 28px 20px; display: grid; gap: 10px; }
 .via { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--apagado); margin: 0; }
-h1 {
-  font: 400 clamp(32px, 7vw, 68px)/1.04 var(--display); margin: 0; text-wrap: balance;
-  color: var(--vermelho);
-}
-.cabecalho .intro { margin: 0; max-width: 64ch; }
+h1 { font: 400 clamp(32px, 7vw, 60px)/1.04 var(--display); margin: 0; text-wrap: balance; color: var(--vermelho); }
+.intro { margin: 0; max-width: 64ch; }
 
 .protocolo {
   position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
-  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px;
   background: var(--papel); border-block: 2px solid var(--tinta); padding: 8px 12px;
-  font-weight: 700;
+  font-weight: 700; font-variant-numeric: tabular-nums;
 }
-.protocolo .fila { display: flex; gap: 4px; flex-wrap: wrap; }
-.protocolo .fila i { width: 14px; height: 14px; border: 2px solid var(--tinta); display: block; }
-.protocolo .fila i.ok { background: var(--azul); border-color: var(--azul); }
-.protocolo .conta { font-variant-numeric: tabular-nums; }
-.protocolo .parecer { font-weight: 400; color: var(--apagado); min-width: 0; }
+.protocolo .fila { flex: 1 0 100%; height: 8px; background: var(--zebra); order: 9; }
+.protocolo .fila i { display: block; height: 100%; width: 0; background: var(--azul); }
+.protocolo .direita { margin-left: auto; }
 
-.grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-left: 2px solid var(--tinta); border-top: 0; }
-.campo {
-  position: relative; min-width: 0; padding: 16px; display: flex; flex-direction: column; gap: 12px;
-  border-right: 2px solid var(--tinta); border-bottom: 2px solid var(--tinta);
-}
+.bloco { padding-block: 16px; display: grid; gap: 12px; }
+.acoes { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.lista { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+h2 { font: 400 24px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
+h3 { font: 400 19px/1.2 var(--display); margin: 0; }
+
+.campo { position: relative; min-width: 0; padding: 16px; display: flex; flex-direction: column; gap: 12px; border: 2px solid var(--tinta); border-top: 0; }
 .campo header { padding-right: 112px; }
 .num { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--apagado); }
-h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
 .lei { margin: 0; font-size: 15px; }
-.status { margin: auto 0 0; font-size: 14px; font-weight: 700; min-height: 2.9em; }
-
+.status { margin: 0; font-size: 14px; font-weight: 700; min-height: 2.9em; }
+.feito #fase { pointer-events: none; }
 .carimbo {
   position: absolute; top: 14px; right: 12px; padding: 2px 6px; pointer-events: none;
   font: 400 13px/1.3 var(--display); letter-spacing: .04em;
   border: 2px dashed var(--linha); color: var(--apagado); transform: rotate(4deg);
 }
-.campo.feito .carimbo {
-  border: 3px solid var(--azul); color: var(--azul); font-size: 15px; transform: rotate(-7deg);
-  animation: bate .28s ease-out;
-}
+.campo.feito .carimbo { border: 3px solid var(--azul); color: var(--azul); font-size: 15px; transform: rotate(-7deg); animation: bate .28s ease-out; }
+.campo.pulado .carimbo { border: 3px solid var(--vermelho); color: var(--vermelho); font-size: 15px; transform: rotate(-7deg); animation: bate .28s ease-out; }
 @keyframes bate { from { transform: rotate(-7deg) scale(2.2); opacity: 0; } to { transform: rotate(-7deg) scale(1); opacity: 1; } }
 
 .palco { background: var(--superficie); border: 2px solid var(--tinta); position: relative; }
+.pad { padding: 12px; display: grid; gap: 10px; }
+.linha-acao { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 
 /* Relógio */
 .relogio { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; padding: 12px; }
@@ -122,13 +126,11 @@ h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
 .leitura b { display: block; font: 400 21px/1.2 var(--display); }
 .leitura span { color: var(--apagado); font-size: 14px; font-variant-numeric: tabular-nums; }
 
-/* Termos */
 .termos { height: 210px; overflow: hidden; padding: 12px; touch-action: none; font-size: 15px; }
 .termos p { margin: 0 0 12px; }
-.linha-acao { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 
 /* Zonas com seta falsa */
-.zona { height: 230px; overflow: hidden; cursor: none; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+.zona { height: 240px; overflow: hidden; cursor: none; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
 .zona * { cursor: none; }
 .seta { position: absolute; left: 0; top: 0; width: 34px; height: 44px; pointer-events: none; z-index: 3; }
 .seta path { fill: var(--tinta); stroke: var(--superficie); stroke-width: 2; }
@@ -136,48 +138,42 @@ h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
 .quadrinho { width: 24px; height: 24px; padding: 0; box-shadow: none; }
 .quadrinho.ok { background: var(--azul); border-color: var(--azul); }
 .rotulo { position: absolute; font-size: 13px; color: var(--apagado); }
-.erro { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--vermelho); pointer-events: none; }
+.erro-ponto { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--vermelho); pointer-events: none; }
 
-/* Fuga */
-.fuga { height: 230px; overflow: hidden; }
-.fuga #manter { position: absolute; left: 12px; right: 12px; top: 12px; }
-.fuga #fugitivo { position: absolute; font-size: 13px; font-weight: 400; padding: 4px 8px; box-shadow: none; transition: left .12s, top .12s; white-space: nowrap; }
+/* Fuga e pop-ups */
+.fuga { height: 240px; overflow: hidden; }
+.fuga .manter { position: absolute; left: 12px; right: 12px; top: 12px; }
+.fugitivo { position: absolute; font-size: 13px; font-weight: 400; padding: 4px 8px; box-shadow: none; transition: left .12s, top .12s; white-space: nowrap; }
+.popup { position: absolute; inset: 16px; border: 3px solid var(--vermelho); background: var(--zebra); padding: 16px 44px 16px 16px; }
+.popup b { display: block; font: 400 22px/1.15 var(--display); color: var(--vermelho); }
+.popup .fechar { width: 30px; height: 30px; padding: 0; font-size: 14px; }
 
 /* Telefone */
-.fone { padding: 16px 12px; display: grid; gap: 12px; }
 .fone output { font: 400 clamp(21px, 4vw, 28px)/1.2 var(--display); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-.fone input { width: 100%; accent-color: var(--vermelho); }
 .fone output b { color: var(--azul); font-weight: 400; }
+.fone input { width: 100%; accent-color: var(--vermelho); }
 .pedido { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; font-size: 14px; }
 .pedido b { font-size: 18px; font-variant-numeric: tabular-nums; }
 .cronometro { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 8px; align-items: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+.trilho { height: 26px; border: 2px solid var(--tinta); background: repeating-linear-gradient(90deg, var(--papel) 0 10px, var(--zebra) 10px 20px); }
+.trilho i { display: block; height: 100%; width: 0; background: var(--azul); }
 .cronometro .trilho { height: 14px; }
 .cronometro .trilho i { width: 100%; background: var(--vermelho); }
-#foneBloco { font-size: 14px; font-variant-numeric: tabular-nums; }
 
-/* Senha */
-.senha { padding: 12px; display: grid; gap: 10px; }
-.senha label { font-size: 14px; }
-.senha input { width: 100%; padding: 8px; background: var(--papel); border: 2px solid var(--tinta); }
 .regras { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 14px; }
 .regras li::before { content: "[ ] "; font-weight: 700; color: var(--vermelho); }
 .regras li.ok::before { content: "[x] "; color: var(--azul); }
 
-/* Roleta */
 .roleta { padding: 12px; display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; align-items: center; }
 .letra { font: 400 56px/96px var(--display); text-align: center; height: 96px; background: var(--tinta); color: var(--papel); }
-.nome { font: 700 22px/1.3 var(--maquina); min-height: 1.3em; border-bottom: 2px solid var(--tinta); overflow-wrap: anywhere; }
-.roleta .linha-acao { margin-top: 8px; }
+.nome { font: 700 22px/1.3 var(--maquina); min-height: 1.3em; border-bottom: 2px solid var(--tinta); overflow-wrap: anywhere; margin-bottom: 8px; }
 
-/* Volume */
 .volume { height: 140px; overflow: hidden; display: grid; place-items: center; touch-action: none; }
 .barra { width: min(74%, 300px); height: 8px; background: var(--tinta); position: relative; }
 .bola { position: absolute; top: -22px; left: 0; width: 22px; height: 22px; margin-left: -11px; border-radius: 50%; background: var(--vermelho); }
 .faixa { position: absolute; top: 0; height: 8px; left: 65%; width: 20%; background: var(--azul); }
 .valor { position: absolute; right: 8px; top: 6px; font-weight: 700; font-variant-numeric: tabular-nums; }
 
-/* Cookies */
-.cookies { padding: 8px 12px; display: grid; gap: 2px; }
 .chave { display: flex; justify-content: space-between; gap: 12px; align-items: center; width: 100%; border: 0; box-shadow: none; background: none; padding: 6px 0; text-align: left; font-weight: 400; }
 .chave:active { transform: none; box-shadow: none; }
 .chave i { flex: none; width: 46px; height: 24px; border: 2px solid var(--tinta); position: relative; background: var(--papel); }
@@ -185,344 +181,215 @@ h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
 .chave[aria-checked="true"] i { background: var(--vermelho); }
 .chave[aria-checked="true"] i::after { left: 24px; background: var(--papel); }
 
-/* Dupla negação */
-.dialogo { padding: 16px 12px; display: grid; gap: 14px; }
-.dialogo p { margin: 0; font-weight: 700; }
-.dialogo .linha-acao > * { flex: 1 1 150px; }
+.dialogo-p { margin: 0; font-weight: 700; }
+.linha-acao.igual > * { flex: 1 1 150px; }
 
-/* Progresso */
-.progresso { padding: 16px 12px; display: grid; gap: 10px; }
-.trilho { height: 26px; border: 2px solid var(--tinta); background: repeating-linear-gradient(90deg, var(--papel) 0 10px, var(--zebra) 10px 20px); }
-.trilho i { display: block; height: 100%; width: 0; background: var(--azul); }
 .pct { font: 400 24px/1.1 var(--display); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 .recado { font-size: 14px; color: var(--apagado); min-height: 1.5em; }
 
-.rodape { padding-block: 16px 24px; font-size: 14px; color: var(--apagado); margin: 0; max-width: 72ch; }
-.rodape + .rodape { padding-top: 0; }
+/* CAPTCHA */
+.captcha { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; max-width: 320px; }
+.ladrilho { position: relative; height: 84px; font-size: 38px; line-height: 1; padding: 0; box-shadow: none; }
+.ladrilho[aria-pressed="true"] { background: var(--zebra); outline: 3px solid var(--azul); outline-offset: -3px; }
+.ladrilho .gatinho { position: absolute; font-size: 10px; opacity: .75; }
+
+/* Terminal e IDE */
+.terminal {
+  background: var(--terminal); color: var(--terminal-tinta); padding: 12px; font-size: 14px;
+  height: 200px; overflow-y: auto; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.terminal .ruim { color: #ff9aa2; }
+.prompt { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px; align-items: center; }
+.codigo { overflow-x: auto; background: var(--terminal); color: var(--terminal-tinta); }
+.codigo button {
+  display: block; width: 100%; min-width: max-content; text-align: left; border: 0; box-shadow: none;
+  background: none; color: inherit; padding: 2px 12px; font-weight: 400; white-space: pre; font-size: 14px;
+}
+.codigo button:hover { background: #2a3a31; }
+.codigo button.errada { background: #5a2028; }
+.conflito { font-size: 14px; white-space: pre-wrap; margin: 0; overflow-wrap: anywhere; }
+.conflito .marca { color: var(--vermelho); font-weight: 700; }
+
+.site-fora { display: grid; place-items: center; height: 100px; border: 2px dashed var(--linha); font: 400 26px/1 var(--display); color: var(--apagado); }
+
+/* Café */
+.xicara { width: 120px; height: 130px; border: 4px solid var(--tinta); border-top: 0; position: relative; margin-inline: auto; background: var(--papel); }
+.xicara i { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: var(--apagado); }
+.xicara .meta { position: absolute; left: -4px; right: -4px; bottom: 70%; height: 20%; border-block: 2px dashed var(--vermelho); }
+
+/* Calculadora */
+.calc { max-width: 280px; display: grid; gap: 8px; }
+.visor { background: var(--terminal); color: var(--terminal-tinta); padding: 8px 12px; text-align: right; font-size: 24px; min-height: 52px; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.teclas { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+
+/* Dark mode troll: deliberadamente branco nos dois temas. */
+.branco { position: fixed; inset: 0; z-index: 50; background: #fff; }
+.branco button { position: absolute; background: #fff; color: #f3f3f3; border: 1px solid #f7f7f7; box-shadow: none; padding: 16px 24px; }
+.branco button:hover, .branco button:focus-visible { color: #111; border-color: #111; background: #fff; }
+
+/* Ranking e cafezinho */
+.tabela { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--linha); }
+th { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--apagado); }
+td.n, th.n { text-align: right; }
+tr.eu td { font-weight: 700; color: var(--azul); }
+.nota { font-size: 14px; color: var(--apagado); margin: 0; }
+.resposta { min-height: 4.5em; padding: 12px; font-weight: 700; }
+.placar { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.placar div { border: 2px solid var(--tinta); padding: 8px; background: var(--superficie); min-width: 0; }
+.placar b { display: block; font: 400 clamp(19px, 4.5vw, 28px)/1.1 var(--display); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.placar span { font-size: 13px; color: var(--apagado); }
+
+.rodape { padding-block: 16px 0; font-size: 14px; color: var(--apagado); margin: 0; max-width: 72ch; }
+.rodape + .rodape { padding-block: 8px 24px; }
 .rodape a { color: var(--azul); font-weight: 700; }
 
-@media (max-width: 800px) {
-  .grade { grid-template-columns: minmax(0, 1fr); }
-}
 @media (max-width: 560px) {
-  .folha { padding-inline: 0; background: repeating-linear-gradient(var(--papel) 0 72px, var(--zebra) 72px 144px); }
+  .folha { padding-inline: 0; }
   .folha::before, .folha::after { display: none; }
   .relogio svg { margin-inline: auto; }
+  .campo { padding: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .campo.feito .carimbo { animation: none; }
-  .fuga #fugitivo, .chave i::after { transition: none; }
+  .campo.feito .carimbo, .campo.pulado .carimbo { animation: none; }
+  .fugitivo, .chave i::after { transition: none; }
 }
 </style>
 </head>
 <body>
-
 <div class="folha">
   <section class="cabecalho">
     <p class="via">Modelo 666-B · Preencher em três vias · Fictício, felizmente</p>
-    <h1>Requerimento de Usabilidade Indevida</h1>
-    <p class="intro">Cada campo abaixo funciona, e cada um foi projetado para atrapalhar você. Cumpra a exigência para ganhar o carimbo. Com os 12 carimbos, leve tudo ao Guichê 13, que fecha para o almoço.</p>
+    <h1>Repartição da UX Hostil</h1>
   </section>
 
-  <div class="protocolo">
-    <span class="conta" id="conta">0 de 12 carimbos</span>
-    <span class="fila" id="fila" aria-hidden="true"></span>
-    <span class="parecer" id="parecer">Situação: aguardando o requerente desistir.</span>
+  <div class="protocolo" id="hud" hidden>
+    <span id="hudGuiche">Guichê 1 de 25</span>
+    <span id="hudTempo">00:00</span>
+    <span id="hudPontos">0 pontos</span>
+    <button class="direita" id="pular" type="button">Pular (0 pontos)</button>
+    <span class="fila"><i id="hudBarra"></i></span>
   </div>
 
-  <div class="grade">
-
-    <section class="campo" id="c1">
-      <header><span class="num">Campo 01 · Data</span><h2>Vencimento por manivela</h2></header>
-      <p class="lei">Arraste o ponteiro. Uma volta no mostrador de 24 horas muda um dia. Exigência: <b id="alvoData"></b>.</p>
-      <div class="palco relogio">
-        <svg id="relogio" viewBox="0 0 240 240" tabindex="0" role="slider" aria-label="Ponteiro de 24 horas" aria-valuetext="">
-          <circle class="aro" cx="120" cy="120" r="114"></circle>
-          <g id="marcas"></g>
-          <line class="ponteiro" id="ponteiro" x1="120" y1="120" x2="120" y2="42"></line>
-          <circle class="eixo" cx="120" cy="120" r="9"></circle>
-        </svg>
-        <div class="leitura"><b id="dataLida"></b><span id="horaLida"></span></div>
+  <section id="inicio">
+    <div class="bloco">
+      <p class="intro">São 25 guichês em 3 andares, e cada um foi projetado para atrapalhar você. Cumpra a exigência para ganhar o carimbo. Cada guichê vale até 1.000 pontos: demorar e errar custam caro, e pular vale zero.</p>
+      <div class="acoes" style="align-items:flex-end">
+        <div style="flex:1 1 220px;min-width:0"><label for="nomeJogador">Nome do requerente</label><input id="nomeJogador" type="text" maxlength="20" autocomplete="nickname" placeholder="Ex.: Sr. Waldemar"></div>
+        <button id="comecar" class="primario" type="button">Pegar a senha e começar</button>
       </div>
-      <p class="status" id="s1" aria-live="polite">Faltam voltas. Atalho de teclado: setas, uma hora por toque.</p>
-      <span class="carimbo">PENDENTE</span>
-    </section>
-
-    <section class="campo" id="c2">
-      <header><span class="num">Campo 02 · Rolagem</span><h2>Termos na contramão</h2></header>
-      <p class="lei">Para descer, gire para cima. O dedo no celular e as setas do teclado também estão invertidos. Leia até o fim.</p>
-      <div class="palco termos" id="termos" tabindex="0" aria-label="Termos de uso com rolagem invertida">
-        <p><b>Cláusula 1.</b> Ao ler esta frase, o usuário declara ter lido a frase seguinte.</p>
-        <p><b>Cláusula 2.</b> A rolagem foi invertida para o seu conforto. Reclamações devem ser enviadas por fax.</p>
-        <p><b>Cláusula 3.</b> O usuário cede à Repartição todos os seus domingos, inclusive os já vividos.</p>
-        <p><b>Cláusula 4.</b> Este termo pode mudar sem aviso, e talvez já tenha mudado enquanto você lia a cláusula 3.</p>
-        <p><b>Cláusula 5.</b> A palavra "gratuito" será interpretada como "gratuito por 7 dias, depois R$ 89,90".</p>
-        <p><b>Cláusula 6.</b> O suporte atende de terça a terça, exceto às terças.</p>
-        <p><b>Cláusula 7.</b> Fica eleito o foro da comarca de Marte para dirimir qualquer dúvida.</p>
-        <p><b>Cláusula 8.</b> Se chegou até aqui, você é a primeira pessoa da história a ler os termos. Parabéns.</p>
+    </div>
+    <div class="bloco">
+      <h2 id="rankingTitulo">Ranking</h2>
+      <div class="tabela" id="rankingInicio"></div>
+      <p class="nota" id="rankingNota"></p>
+    </div>
+    <div class="bloco" id="cafezinho">
+      <h2>Sala do Cafezinho</h2>
+      <p class="intro">Intervalo sem pontos, para quem programa. Escolha um gerador.</p>
+      <div class="acoes">
+        <button type="button" data-gerador="desculpa">Desculpa de atraso</button>
+        <button type="button" data-gerador="commit">Mensagem de commit</button>
+        <button type="button" data-gerador="bug">Bug fictício</button>
+        <button type="button" data-gerador="horoscopo">Horóscopo do dev</button>
+        <button type="button" data-gerador="portfolio">Portfólio honesto</button>
       </div>
-      <div class="linha-acao"><button id="aceitar" type="button" disabled>Li e concordo</button><span id="lido">Lido: 0%</span></div>
-      <p class="status" id="s2" aria-live="polite"></p>
-      <span class="carimbo">PENDENTE</span>
-    </section>
+      <div class="palco resposta" id="respostaCafe" aria-live="polite">Hoje seu bug está em Marte, retrógrado. Clique em um gerador.</div>
+      <h3>Code review automático</h3>
+      <label for="codigoReview">Cole qualquer código</label>
+      <textarea id="codigoReview" rows="3" spellcheck="false">console.log("funciona na minha máquina");</textarea>
+      <div class="acoes"><button id="revisar" type="button">Pedir revisão</button><span id="revisao" aria-live="polite"></span></div>
+    </div>
+  </section>
 
-    <section class="campo" id="c3">
-      <header><span class="num">Campo 03 · Ponteiro</span><h2>A seta que clica pela cauda</h2></header>
-      <p class="lei">Marque as três caixas. Dentro do quadro, o clique sai da parte de trás da seta, longe da ponta.</p>
-      <div class="palco zona" id="zona3">
-        <span class="rotulo" style="left:29%;top:13%">via 1</span>
-        <button type="button" class="alvo quadrinho" style="left:22%;top:12%" aria-label="Assinar primeira via"></button>
-        <span class="rotulo" style="left:71%;top:43%">via 2</span>
-        <button type="button" class="alvo quadrinho" style="left:64%;top:42%" aria-label="Assinar segunda via"></button>
-        <span class="rotulo" style="left:39%;top:78%">via 3</span>
-        <button type="button" class="alvo quadrinho" style="left:32%;top:77%" aria-label="Assinar terceira via"></button>
-        <svg class="seta" viewBox="0 0 34 44" hidden aria-hidden="true"><path d="M2 2 L2 33 L10 26 L16 40 L23 37 L17 23 L28 23 Z"></path></svg>
+  <section id="jogo" hidden>
+    <div class="campo" id="campo">
+      <header><span class="num" id="faseNum"></span><h2 id="faseTitulo"></h2></header>
+      <p class="lei" id="faseLei"></p>
+      <div id="fase"></div>
+      <p class="status" id="status" aria-live="polite"></p>
+      <div class="acoes"><button id="proximo" class="primario" type="button" hidden>Próximo guichê</button><span id="ganho"></span></div>
+      <span class="carimbo" id="carimbo">PENDENTE</span>
+    </div>
+  </section>
+
+  <section id="fim" hidden>
+    <div class="bloco">
+      <p class="via">Parecer final</p>
+      <h2 id="fimTitulo"></h2>
+      <p class="intro" id="fimTexto"></p>
+      <div class="placar">
+        <div><b id="fimPontos"></b><span>pontos</span></div>
+        <div><b id="fimTempo"></b><span>de expediente</span></div>
+        <div><b id="fimPulos"></b><span>guichês pulados</span></div>
       </div>
-      <div class="linha-acao"><button id="virar" type="button">Virar a seta ao contrário</button><span id="perdidos">Cliques perdidos: 0</span></div>
-      <p class="status" id="s3" aria-live="polite">Os pontos vermelhos mostram onde seus cliques caíram.</p>
-      <span class="carimbo">PENDENTE</span>
-    </section>
+      <div class="acoes"><button id="denovo" class="primario" type="button">Jogar de novo</button><button id="voltar" type="button">Voltar ao início</button></div>
+      <h2 id="rankingTituloFim">Ranking</h2>
+      <div class="tabela" id="rankingFim"></div>
+      <p class="nota" id="rankingNotaFim"></p>
+    </div>
+  </section>
 
-    <section class="campo" id="c4">
-      <header><span class="num">Campo 04 · Ponteiro</span><h2>Mouse no espelho</h2></header>
-      <p class="lei">Dentro do quadro, a seta anda ao contrário nos dois eixos. Foi para a direita, ela vai para a esquerda. Clique em Protocolar.</p>
-      <div class="palco zona" id="zona4">
-        <button type="button" class="alvo" data-tipo="certo" style="left:12%;top:14%">Protocolar</button>
-        <button type="button" class="alvo" data-tipo="errado" style="left:50%;top:32%">Arquivar para sempre</button>
-        <button type="button" class="alvo" data-tipo="errado" style="left:14%;top:68%">Enviar ao estagiário</button>
-        <svg class="seta" viewBox="0 0 34 44" hidden aria-hidden="true"><path d="M2 2 L2 33 L10 26 L16 40 L23 37 L17 23 L28 23 Z"></path></svg>
-      </div>
-      <p class="status" id="s4" aria-live="polite"></p>
-      <span class="carimbo">PENDENTE</span>
-    </section>
-
-    <section class="campo" id="c5">
-      <header><span class="num">Campo 05 · Botões</span><h2>Cancelar é um exercício físico</h2></header>
-      <p class="lei">Cancele sua assinatura. O link de cancelamento tem medo de você, mas ele cansa.</p>
-      <div class="palco fuga" id="fuga">
-        <button id="manter" type="button">Continuar aproveitando o Plano Premium Plus</button>
-        <button id="fugitivo" type="button" style="left:40%;top:60%">cancelar assinatura</button>
-      </div>
-      <p class="status" id="s5" aria-live="polite"></p>
-      <span class="carimbo">PENDENTE</span>
-    </section>
-
-    <section class="campo" id="c6">
-      <header><span class="num">Campo 06 · Telefone</span><h2>Celular por barra deslizante</h2></header>
-      <p class="lei">Você tem 30 segundos para discar o número sorteado. A barra acerta dois dígitos por vez: pare no valor certo, solte, e o bloco trava. Use +1 e −1 para o ajuste fino.</p>
-      <div class="palco fone">
-        <div class="pedido"><span>Ligue para</span> <b id="foneAlvo">(??) ?????-????</b></div>
-        <div class="cronometro"><span id="foneTempo">30,0 s</span><div class="trilho"><i id="foneTrilho"></i></div></div>
-        <output id="foneSaida" for="fone"></output>
-        <input id="fone" type="range" min="11000000000" max="99999999999" step="1" value="19912345678" aria-label="Número de telefone" disabled>
-        <div class="linha-acao"><button id="foneMenos" type="button" aria-label="Diminuir um" disabled>−1</button><button id="foneMais" type="button" aria-label="Aumentar um" disabled>+1</button><span id="foneBloco">Bloco 1 de 5</span></div>
-        <div class="linha-acao"><button id="foneComecar" type="button">Começar</button></div>
-      </div>
-      <p class="status" id="s6" aria-live="polite"></p>
-      <span class="carimbo">PENDENTE</span>
-    </section>
-
-    <section class="campo" id="c7">
-      <header><span class="num">Campo 07 · Senha</span><h2>Senha com exigências crescentes</h2></header>
-      <p class="lei">Cada regra só aparece quando você cumpre a anterior.</p>
-      <div class="palco senha">
-        <label for="senha">Crie sua senha</label>
-        <input id="senha" type="text" autocomplete="off" spellcheck="false">
-        <ul class="regras" id="regras"></ul>
-      </div>
-      <p class="status" id="s7" aria-live="polite"></p>
-      <span class="carimbo">PENDENTE</span>
-    </section>
-
-    <section class="campo" id="c8">
-      <header><span class="num">Campo 08 · Nome</span><h2>Nome completo na roleta</h2></header>
-      <p class="lei">As letras passam em ordem aleatória. Exigência: soletre <b>GUSTAVOWEB</b> e salve. Errou uma letra, apaga tudo.</p>
-      <div class="palco roleta">
-        <div class="letra" id="letra" aria-hidden="true">A</div>
-        <div>
-          <div class="nome" id="nome" aria-label="Nome digitado"></div>
-          <div class="linha-acao">
-            <button id="parar" type="button">Parar</button>
-            <button id="apagar" type="button">Apagar tudo</button>
-            <button id="salvar" type="button">Salvar</button>
-          </div>
-        </div>
-      </div>
-      <p class="status" id="s8" aria-live="polite"></p>
-      <span class="carimbo">PENDENTE</span>
-    </section>
-
-    <section class="campo" id="c9">
-      <header><span class="num">Campo 09 · Volume</span><h2>Volume por gravidade</h2></header>
-      <p class="lei">Segure para inclinar a barra e a bolinha rolar. Mantenha na faixa azul, entre 65% e 85%, por um segundo. Passou da ponta, ela cai.</p>
-      <div class="palco volume">
-        <span class="valor" id="volValor">0%</span>
-        <div class="barra" id="barra"><span class="faixa"></span><span class="bola" id="bola"></span></div>
-      </div>
-      <div class="linha-acao"><button id="inclinar" type="button">Segure para inclinar</button></div>
-      <p class="status" id="s9" aria-live="polite"></p>
-      <span class="carimbo">PENDENTE</span>
-    </section>
-
-    <section class="campo" id="c10">
-      <header><span class="num">Campo 10 · Privacidade</span><h2>Preferências de cookies</h2></header>
-      <p class="lei">Desligue todas as chaves. Cada chave está ligada às vizinhas por motivos de transparência.</p>
-      <div class="palco cookies" id="cookies"></div>
-      <p class="status" id="s10" aria-live="polite"></p>
-      <span class="carimbo">PENDENTE</span>
-    </section>
-
-    <section class="campo" id="c11">
-      <header><span class="num">Campo 11 · Confirmação</span><h2>Dupla negação obrigatória</h2></header>
-      <p class="lei">Responda com atenção. Os botões trocam de lugar, e nenhuma resposta significa o que parece.</p>
-      <div class="palco dialogo">
-        <p id="pergunta"></p>
-        <div class="linha-acao" id="respostas"></div>
-      </div>
-      <p class="status" id="s11" aria-live="polite"></p>
-      <span class="carimbo">PENDENTE</span>
-    </section>
-
-    <section class="campo" id="c12">
-      <header><span class="num">Campo 12 · Envio</span><h2>Barra de progresso sincera demais</h2></header>
-      <p class="lei">Envie o requerimento e acompanhe. O botão Acelerar faz exatamente o que uma repartição faria.</p>
-      <div class="palco progresso">
-        <div class="pct" id="pct">0%</div>
-        <div class="trilho"><i id="trilho"></i></div>
-        <div class="recado" id="recado">Nada enviado até agora.</div>
-        <div class="linha-acao"><button id="enviar" type="button">Enviar</button><button id="acelerar" type="button" disabled>Acelerar</button></div>
-      </div>
-      <p class="status" id="s12" aria-live="polite"></p>
-      <span class="carimbo">PENDENTE</span>
-    </section>
-
-  </div>
   <p class="rodape">Esta repartição não existe. Os padrões daqui existem: cancelamento escondido, consentimento confuso e progresso falso aparecem em sites reais com menos humor.</p>
   <p class="rodape">Desenvolvido por <a href="https://gustavoweb.com">gustavoweb.com</a></p>
 </div>
 
 <script>
 (function () {
+  'use strict';
   const $ = (id) => document.getElementById(id);
-  const feitos = new Set();
-  const fila = $('fila');
-  for (let i = 0; i < 12; i++) fila.appendChild(document.createElement('i'));
+  const sorteia = (l) => l[Math.floor(Math.random() * l.length)];
+  const embaralha = (l) => {
+    const a = l.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+  const relogio = (ms) => {
+    const s = Math.floor(ms / 1000);
+    return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  };
+  const milhar = (n) => Number(n).toLocaleString('pt-BR');
+  const SETA = '<svg class="seta" viewBox="0 0 34 44" hidden aria-hidden="true"><path d="M2 2 L2 33 L10 26 L16 40 L23 37 L17 23 L28 23 Z"></path></svg>';
 
-  function carimbar(n, msg) {
-    if (msg) $('s' + n).textContent = msg;
-    if (feitos.has(n)) return;
-    feitos.add(n);
-    const campo = $('c' + n);
-    campo.classList.add('feito');
-    campo.querySelector('.carimbo').textContent = 'DEFERIDO';
-    $('conta').textContent = feitos.size + ' de 12 carimbos';
-    [...fila.children].forEach((el, i) => el.classList.toggle('ok', i < feitos.size));
-    const pareceres = ['Situação: em análise.', 'Situação: em análise pelo colega que saiu de férias.', 'Situação: falta reconhecer firma.'];
-    $('parecer').textContent = feitos.size === 12
-      ? 'Processo deferido. Prazo de análise: 90 dias úteis. Volte amanhã com uma cópia.'
-      : pareceres[feitos.size % pareceres.length];
+  /* Botão que foge do ponteiro e cansa depois de algumas fugas. */
+  function fuga(area, b, limite, cansou, sorteiaPos) {
+    let n = 0;
+    function foge() {
+      if (n >= limite) return;
+      n++;
+      const p = sorteiaPos();
+      b.style.left = p.x + 'px';
+      b.style.top = p.y + 'px';
+      if (n === limite) cansou();
+    }
+    area.addEventListener('pointermove', (e) => {
+      const r = b.getBoundingClientRect();
+      if (Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2)) < 90) foge();
+    });
+    b.addEventListener('pointerdown', (e) => { if (n < limite) { e.preventDefault(); foge(); } });
   }
 
-  /* 01 Relógio */
-  (function () {
-    const svg = $('relogio'), marcas = $('marcas');
-    const NS = 'http://www.w3.org/2000/svg';
-    for (let h = 0; h < 24; h++) {
-      const a = (h * 15 - 90) * Math.PI / 180;
-      const t = document.createElementNS(NS, 'line');
-      const r1 = h % 3 === 0 ? 96 : 102;
-      t.setAttribute('x1', 120 + Math.cos(a) * r1); t.setAttribute('y1', 120 + Math.sin(a) * r1);
-      t.setAttribute('x2', 120 + Math.cos(a) * 110); t.setAttribute('y2', 120 + Math.sin(a) * 110);
-      t.setAttribute('class', 'tick'); marcas.appendChild(t);
-      if (h % 3 === 0) {
-        const l = document.createElementNS(NS, 'text');
-        l.setAttribute('x', 120 + Math.cos(a) * 80); l.setAttribute('y', 120 + Math.sin(a) * 80);
-        l.textContent = h; marcas.appendChild(l);
-      }
-    }
-    const agora = new Date();
-    const y = agora.getFullYear(), m = agora.getMonth(), d = agora.getDate();
-    const alvo = new Date(y, m, d + 3);
-    const fmt = (dt) => dt.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
-    $('alvoData').textContent = fmt(alvo);
-    let horas = agora.getHours() + agora.getMinutes() / 60;
-
-    function pinta() {
-      const dia = Math.floor(horas / 24);
-      const resto = horas - dia * 24;
-      const dt = new Date(y, m, d + dia);
-      $('ponteiro').setAttribute('transform', 'rotate(' + (resto * 15) + ' 120 120)');
-      const hh = Math.floor(resto), mm = Math.floor((resto - hh) * 60);
-      const hora = String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
-      $('dataLida').textContent = fmt(dt);
-      $('horaLida').textContent = hora + ' · ' + dt.toLocaleDateString('pt-BR');
-      svg.setAttribute('aria-valuetext', fmt(dt) + ', ' + hora);
-      if (dt.getTime() === alvo.getTime()) carimbar(1, 'Data aceita. Agora marque a devolução para o ano que vem.');
-    }
-    const ang = (e) => {
-      const r = svg.getBoundingClientRect();
-      return Math.atan2(e.clientY - r.top - r.height / 2, e.clientX - r.left - r.width / 2) * 180 / Math.PI;
-    };
-    let ultimo = null;
-    svg.addEventListener('pointerdown', (e) => { ultimo = ang(e); svg.setPointerCapture(e.pointerId); });
-    svg.addEventListener('pointermove', (e) => {
-      if (ultimo === null) return;
-      const a = ang(e);
-      let delta = a - ultimo;
-      if (delta > 180) delta -= 360;
-      if (delta < -180) delta += 360;
-      ultimo = a; horas += delta / 15; pinta();
-    });
-    const solta = () => { ultimo = null; };
-    svg.addEventListener('pointerup', solta);
-    svg.addEventListener('pointercancel', solta);
-    svg.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { horas += 1; pinta(); e.preventDefault(); }
-      if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { horas -= 1; pinta(); e.preventDefault(); }
-    });
-    pinta();
-  })();
-
-  /* 02 Rolagem invertida */
-  (function () {
-    const t = $('termos');
-    function lido() {
-      const max = t.scrollHeight - t.clientHeight;
-      const p = max > 0 ? Math.round(t.scrollTop / max * 100) : 100;
-      $('lido').textContent = 'Lido: ' + p + '%';
-      if (p >= 98) $('aceitar').disabled = false;
-    }
-    t.addEventListener('wheel', (e) => { e.preventDefault(); t.scrollTop -= e.deltaY; lido(); }, { passive: false });
-    let ty = null;
-    t.addEventListener('touchstart', (e) => { ty = e.touches[0].clientY; }, { passive: true });
-    t.addEventListener('touchmove', (e) => {
-      e.preventDefault();
-      const y = e.touches[0].clientY;
-      t.scrollTop += y - ty; ty = y; lido();
-    }, { passive: false });
-    t.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowDown') { t.scrollTop -= 40; e.preventDefault(); lido(); }
-      if (e.key === 'ArrowUp') { t.scrollTop += 40; e.preventDefault(); lido(); }
-    });
-    $('aceitar').addEventListener('click', () => carimbar(2, 'Concordância registrada. Você também concordou com a cláusula 3.'));
-  })();
-
-  /* Base das zonas com seta falsa */
+  /* Área com seta desenhada, para separar o que se vê do que se clica. */
   function zona(el, op) {
     const seta = el.querySelector('.seta');
-    function ponto(e) {
+    const ponto = (e) => {
       const r = el.getBoundingClientRect();
       return op.mapa(e.clientX - r.left, e.clientY - r.top, r, e.pointerType);
-    }
-    function move(p) {
+    };
+    const move = (p) => {
       seta.hidden = false;
       seta.style.left = (p.x - op.ax) + 'px';
       seta.style.top = (p.y - op.ay) + 'px';
-    }
+    };
     el.addEventListener('pointermove', (e) => move(ponto(e)));
     el.addEventListener('pointerleave', () => { seta.hidden = true; });
     el.addEventListener('pointerdown', (e) => {
-      const p = ponto(e); move(p);
+      const p = ponto(e);
+      move(p);
       const z = el.getBoundingClientRect();
       const alvo = [...el.querySelectorAll('.alvo')].find((b) => {
         const r = b.getBoundingClientRect();
@@ -535,345 +402,1002 @@ h2 { font: 400 22px/1.15 var(--display); margin: 2px 0 0; text-wrap: balance; }
     return seta;
   }
 
-  /* 03 Clique pela cauda */
-  (function () {
-    const el = $('zona3');
-    let perdidos = 0;
-    const seta = zona(el, {
-      ax: 20, ay: 39,
-      mapa: (x, y, r, tipo) => tipo === 'mouse' ? { x, y } : { x: x + 30, y: y + 30 },
-      clique(alvo, p) {
-        if (alvo) {
-          alvo.classList.add('ok');
-          const faltam = el.querySelectorAll('.quadrinho:not(.ok)').length;
-          if (!faltam) carimbar(3, 'Três vias assinadas. Ninguém vai conseguir ler a sua assinatura.');
-          else $('s3').textContent = 'Via assinada. Faltam ' + faltam + '.';
-        } else if (p) {
-          perdidos++;
-          $('perdidos').textContent = 'Cliques perdidos: ' + perdidos;
-          const m = document.createElement('span');
-          m.className = 'erro'; m.style.left = p.x + 'px'; m.style.top = p.y + 'px';
-          el.appendChild(m);
-          const marcas = el.querySelectorAll('.erro');
-          if (marcas.length > 12) marcas[0].remove();
+  function imprime(term, txt, ruim) {
+    const l = document.createElement('div');
+    l.textContent = txt;
+    if (ruim) l.className = 'ruim';
+    term.appendChild(l);
+    term.scrollTop = term.scrollHeight;
+  }
+
+  /* ---------- Guichês ---------- */
+  const ANDARES = ['1º andar · Atendimento', '2º andar · Almoxarifado de Ponteiros', '3º andar · Departamento de TI'];
+  const FASES = [
+    { andar: 0, titulo: 'Login impossível', livre: 15, lei: 'Entre com a sua senha. Leia com atenção o que o sistema responde.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco pad"><label for="loginSenha">Senha do usuário requerente</label><input id="loginSenha" type="text" autocomplete="off" spellcheck="false"><div class="linha-acao"><button id="entrar" type="button">Entrar</button></div></div>';
+      const frases = ['Sua senha está incorreta.', 'Repetindo: sua senha é incorreta.', 'Nós já dissemos. A sua senha é "incorreta".'];
+      let t = 0;
+      const tenta = () => {
+        if (q('#loginSenha').value.trim().toLowerCase() === 'incorreta') { g.ok('Bem-vindo. Sua senha expirou há 3 segundos.'); return; }
+        g.msg(frases[Math.min(t++, frases.length - 1)]);
+        q('#loginSenha').value = '';
+      };
+      q('#entrar').addEventListener('click', tenta);
+      q('#loginSenha').addEventListener('keydown', (e) => { if (e.key === 'Enter') tenta(); });
+    } },
+
+    { andar: 0, titulo: 'Scroll troll', livre: 20, lei: 'Para descer, gire para cima. O dedo no celular e as setas do teclado também estão invertidos. Leia até o fim.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco termos" id="termos" tabindex="0" aria-label="Termos de uso com rolagem invertida"><p><b>Cláusula 1.</b> Ao ler esta frase, o usuário declara ter lido a frase seguinte.</p><p><b>Cláusula 2.</b> A rolagem foi invertida para o seu conforto. Reclamações devem ser enviadas por fax.</p><p><b>Cláusula 3.</b> O usuário cede à Repartição todos os seus domingos, inclusive os já vividos.</p><p><b>Cláusula 4.</b> Este termo pode mudar sem aviso, e talvez já tenha mudado enquanto você lia a cláusula 3.</p><p><b>Cláusula 5.</b> A palavra "gratuito" será interpretada como "gratuito por 7 dias, depois R$ 89,90".</p><p><b>Cláusula 6.</b> O suporte atende de terça a terça, exceto às terças.</p><p><b>Cláusula 7.</b> Fica eleito o foro da comarca de Marte para dirimir qualquer dúvida.</p><p><b>Cláusula 8.</b> Se chegou até aqui, você é a primeira pessoa da história a ler os termos.</p></div><div class="linha-acao" style="margin-top:12px"><button id="aceitar" type="button" disabled>Li e concordo</button><span id="lido">Lido: 0%</span></div>';
+      const t = q('#termos');
+      const lido = () => {
+        const max = t.scrollHeight - t.clientHeight;
+        const p = max > 0 ? Math.round(t.scrollTop / max * 100) : 100;
+        q('#lido').textContent = 'Lido: ' + p + '%';
+        if (p >= 98) q('#aceitar').disabled = false;
+      };
+      t.addEventListener('wheel', (e) => { e.preventDefault(); t.scrollTop -= e.deltaY; lido(); }, { passive: false });
+      let ty = null;
+      t.addEventListener('touchstart', (e) => { ty = e.touches[0].clientY; }, { passive: true });
+      t.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const y = e.touches[0].clientY;
+        t.scrollTop += y - ty; ty = y; lido();
+      }, { passive: false });
+      t.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown') { t.scrollTop -= 40; e.preventDefault(); lido(); }
+        if (e.key === 'ArrowUp') { t.scrollTop += 40; e.preventDefault(); lido(); }
+      });
+      q('#aceitar').addEventListener('click', () => g.ok('Concordância registrada. Você também concordou com a cláusula 3.'));
+    } },
+
+    { andar: 0, titulo: 'CAPTCHA infernal', livre: 25, lei: 'Selecione todas as imagens com um gato. Olhe com atenção: sempre sobra um.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco pad"><div class="captcha" id="captcha"></div><div class="linha-acao"><button id="verificar" type="button">Verificar</button></div></div>';
+      const OUTROS = ['🐶', '🚗', '🌵', '🍕', '🚦', '🚲', '🦆', '🧀', '🪑', '🌻', '🎈', '🐢'];
+      let rodada = 0, gatos = new Set();
+      function monta() {
+        const box = q('#captcha');
+        box.textContent = '';
+        const pos = embaralha([0, 1, 2, 3, 4, 5, 6, 7, 8]);
+        gatos = new Set(rodada === 0 ? pos.slice(0, 3) : pos.slice(0, 1));
+        const figuras = embaralha(OUTROS);
+        for (let i = 0; i < 9; i++) {
+          const b = document.createElement('button');
+          b.type = 'button'; b.className = 'ladrilho'; b.setAttribute('aria-pressed', 'false');
+          b.dataset.i = i;
+          b.textContent = rodada === 0 && gatos.has(i) ? '🐱' : figuras[i];
+          b.setAttribute('aria-label', 'Imagem ' + (i + 1));
+          if (rodada > 0 && gatos.has(i)) {
+            const s = document.createElement('span');
+            s.className = 'gatinho'; s.textContent = '🐱';
+            s.style.left = (6 + Math.random() * 70) + '%';
+            s.style.top = (6 + Math.random() * 66) + '%';
+            b.appendChild(s);
+          }
+          b.addEventListener('click', () => b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true')));
+          box.appendChild(b);
         }
       }
-    });
-    seta.style.transformOrigin = '20px 39px';
-    let virada = false;
-    $('virar').addEventListener('click', () => {
-      virada = !virada;
-      seta.style.transform = virada ? 'rotate(180deg)' : '';
-      $('virar').textContent = virada ? 'Desvirar a seta' : 'Virar a seta ao contrário';
-    });
-  })();
+      q('#verificar').addEventListener('click', () => {
+        const sel = [...q('#captcha').querySelectorAll('[aria-pressed="true"]')].map((b) => Number(b.dataset.i));
+        const certo = sel.length === gatos.size && sel.every((i) => gatos.has(i));
+        if (!certo) { g.erro('Tem gato sobrando ou faltando. Tente de novo.'); return; }
+        rodada++;
+        if (rodada === 3) { g.ok('Você provou que não é um robô. Um robô teria desistido antes.'); return; }
+        g.msg('Faltou um gato. Ele é pequeno e está em uma das imagens abaixo.');
+        monta();
+      });
+      monta();
+    } },
 
-  /* 04 Mouse espelhado */
-  zona($('zona4'), {
-    ax: 2, ay: 2,
-    mapa: (x, y, r) => ({ x: r.width - x, y: r.height - y }),
-    clique(alvo) {
-      if (!alvo) return;
-      if (alvo.dataset.tipo === 'certo') carimbar(4, 'Protocolado. Número do protocolo: invertido.');
-      else $('s4').textContent = alvo.textContent + ': ação registrada. Para desfazer, compareça pessoalmente.';
-    }
+    { andar: 0, titulo: 'Botão covarde', livre: 15, lei: 'Cancele sua assinatura. O link de cancelamento tem medo de você, mas ele cansa.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco fuga" id="fuga"><button class="manter" id="manter" type="button">Continuar aproveitando o Plano Premium Plus</button><button class="fugitivo" id="fugitivo" type="button" style="left:40%;top:60%">cancelar assinatura</button></div>';
+      const palco = q('#fuga'), b = q('#fugitivo');
+      let manteve = 0;
+      fuga(palco, b, 8, () => { b.textContent = 'cansei, pode clicar'; g.msg('O link parou para respirar.'); }, () => ({
+        x: 4 + Math.random() * Math.max(palco.clientWidth - b.offsetWidth - 8, 1),
+        y: 62 + Math.random() * Math.max(palco.clientHeight - b.offsetHeight - 66, 1)
+      }));
+      b.addEventListener('click', () => g.ok('Cancelamento recebido. Sua assinatura termina em 2041.'));
+      q('#manter').addEventListener('click', () => { manteve++; g.erro('Obrigado! Plano renovado por mais ' + (manteve * 12) + ' meses.'); });
+    } },
+
+    { andar: 0, titulo: 'Preferências de cookies', livre: 20, lei: 'Desligue todas as chaves. Cada chave está ligada às vizinhas por motivos de transparência. O botão Aceitar tudo cresce a cada clique seu.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco pad"><div id="cookies" style="display:grid;gap:2px"></div><button id="aceitarTudo" type="button">Aceitar tudo</button></div>';
+      const nomes = ['Cookies essenciais', 'Cookies de polvilho', 'Rastrear seus sonhos', 'Vender a senha do Wi-Fi', 'Avisar a sua mãe', 'Ler suas conversas com a sogra'];
+      let est = nomes.map(() => true), tam = 16;
+      const box = q('#cookies');
+      const botoes = nomes.map((n, i) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'chave'; b.setAttribute('role', 'switch');
+        const s = document.createElement('span'); s.textContent = n;
+        b.append(s, document.createElement('i'));
+        b.addEventListener('click', () => {
+          [i - 1, i, i + 1].forEach((k) => { if (k >= 0 && k < est.length) est[k] = !est[k]; });
+          tam = Math.min(tam + 3, 40);
+          q('#aceitarTudo').style.fontSize = tam + 'px';
+          pinta();
+        });
+        box.appendChild(b);
+        return b;
+      });
+      function pinta() {
+        botoes.forEach((b, i) => b.setAttribute('aria-checked', String(est[i])));
+        if (est.every((v) => !v)) g.ok('Tudo desligado. Suas preferências valem até o próximo carregamento.');
+        else g.msg('Ligadas: ' + est.filter(Boolean).length + ' de 6.');
+      }
+      q('#aceitarTudo').addEventListener('click', () => { est = nomes.map(() => true); g.erro('Obrigado por aceitar. Tudo foi religado.'); botoes.forEach((b) => b.setAttribute('aria-checked', 'true')); });
+      pinta();
+    } },
+
+    { andar: 0, titulo: 'Senha segura', livre: 40, lei: 'Cada regra só aparece quando você cumpre a anterior.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco pad"><label for="senha">Crie sua senha</label><input id="senha" type="text" autocomplete="off" spellcheck="false"><ul class="regras" id="regras"></ul></div>';
+      const regras = [
+        ['Pelo menos 8 caracteres.', (s) => s.length >= 8],
+        ['Uma letra maiúscula.', (s) => /[A-ZÀ-Ú]/.test(s)],
+        ['O nome de um mês.', (s) => /janeiro|fevereiro|mar[cç]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro/i.test(s)],
+        ['Some cada algarismo da senha: o total deve dar 13. Exemplo: 9 e 4.', (s) => (s.match(/\d/g) || []).reduce((a, c) => a + Number(c), 0) === 13],
+        ['Uma destas frutas: pequi, caju ou jaca.', (s) => /pequi|caju|jaca/i.test(s)],
+        ['Nenhuma letra A. Motivo: sim.', (s) => !/[aáàâã]/i.test(s)]
+      ];
+      function pinta() {
+        const s = q('#senha').value, lista = q('#regras');
+        lista.textContent = '';
+        let todas = true;
+        for (const [txt, ok] of regras) {
+          const li = document.createElement('li');
+          li.textContent = txt;
+          const passou = ok(s);
+          li.classList.toggle('ok', passou);
+          lista.appendChild(li);
+          if (!passou) { todas = false; break; }
+        }
+        if (todas) g.ok('Senha aceita. Ela já é usada pelo Sr. Waldemar, do 3º andar, mas tudo bem.');
+      }
+      q('#senha').addEventListener('input', pinta);
+      pinta();
+    } },
+
+    { andar: 0, titulo: 'Botão de fechar', livre: 25, lei: 'Feche os três anúncios. O X se mexe quando você chega perto, e também cansa.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco fuga" id="popups"></div>';
+      const area = q('#popups');
+      const ads = [['Parabéns!', 'Você é o visitante número 1.000.000 desta repartição.'], ['Espere!', 'Antes de sair, assine nossa newsletter sobre assinaturas.'], ['Última chance!', 'Este anúncio fecha em 3, 2, 1, 3, 2, 1...']];
+      let i = 0;
+      function abre() {
+        area.innerHTML = '<div class="popup" id="popup"><b></b><span></span><button class="fechar fugitivo" id="xis" type="button" aria-label="Fechar anúncio" style="right:auto;left:calc(100% - 38px);top:6px">X</button></div>';
+        q('#popup b').textContent = ads[i][0];
+        q('#popup span').textContent = ads[i][1];
+        const pop = q('#popup'), x = q('#xis');
+        fuga(area, x, 4, () => g.msg('O X desistiu de correr.'), () => ({
+          x: 4 + Math.random() * Math.max(pop.clientWidth - 38, 1),
+          y: 4 + Math.random() * Math.max(pop.clientHeight - 38, 1)
+        }));
+        x.addEventListener('click', () => {
+          i++;
+          if (i === ads.length) { area.textContent = ''; g.ok('Todos os anúncios fechados. Sobrou uma tela vazia, que é o melhor design até agora.'); return; }
+          g.msg('Fechado. Outro anúncio abriu no lugar.');
+          abre();
+        });
+      }
+      abre();
+    } },
+
+    { andar: 0, titulo: 'Formulário infinito', livre: 30, lei: 'Preencha o último campo obrigatório. Este é o último. De verdade.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco pad"><span class="num" id="etapa"></span><label for="campoInf" id="rotuloInf"></label><input id="campoInf" type="text" autocomplete="off"><div class="linha-acao"><button id="seguir" type="button">Concluir</button></div></div>';
+      const campos = ['Seu nome', 'Nome da sua mãe', 'Nome do cachorro da sua mãe', 'CEP da casa onde você cresceu', 'Cor do primeiro carro do seu vizinho', 'Repita o campo anterior sem olhar', 'Digite "chega" para terminar'];
+      let i = 0;
+      function pinta() {
+        q('#etapa').textContent = 'Etapa 1 de 1';
+        q('#rotuloInf').textContent = campos[i] + ' (obrigatório)';
+        q('#campoInf').value = '';
+        q('#campoInf').focus();
+      }
+      function segue() {
+        const v = q('#campoInf').value.trim();
+        if (!v) { g.msg('Campo obrigatório. Todos são.'); return; }
+        if (i === campos.length - 1) {
+          if (v.toLowerCase() === 'chega') g.ok('Formulário recebido. Por favor, imprima, assine e digitalize.');
+          else g.msg('Digite exatamente: chega');
+          return;
+        }
+        i++;
+        g.msg('Obrigado! Falta só mais um campo obrigatório.');
+        pinta();
+      }
+      q('#seguir').addEventListener('click', segue);
+      q('#campoInf').addEventListener('keydown', (e) => { if (e.key === 'Enter') segue(); });
+      pinta();
+    } },
+
+    { andar: 1, titulo: 'Vencimento por manivela', livre: 25, lei: 'Arraste o ponteiro. Uma volta no mostrador de 24 horas muda um dia. Pelo teclado, as setas andam uma hora.', montar(el, g, q) {
+      el.innerHTML = '<p class="lei" style="margin-bottom:10px">Exigência: <b id="alvoData"></b>.</p><div class="palco relogio"><svg id="relogio" viewBox="0 0 240 240" tabindex="0" role="slider" aria-label="Ponteiro de 24 horas" aria-valuetext=""><circle class="aro" cx="120" cy="120" r="114"></circle><g id="marcas"></g><line class="ponteiro" id="ponteiro" x1="120" y1="120" x2="120" y2="42"></line><circle class="eixo" cx="120" cy="120" r="9"></circle></svg><div class="leitura"><b id="dataLida"></b><span id="horaLida"></span></div></div>';
+      const svg = q('#relogio'), marcas = q('#marcas'), NS = 'http://www.w3.org/2000/svg';
+      for (let h = 0; h < 24; h++) {
+        const a = (h * 15 - 90) * Math.PI / 180;
+        const t = document.createElementNS(NS, 'line');
+        const r1 = h % 3 === 0 ? 96 : 102;
+        t.setAttribute('x1', 120 + Math.cos(a) * r1); t.setAttribute('y1', 120 + Math.sin(a) * r1);
+        t.setAttribute('x2', 120 + Math.cos(a) * 110); t.setAttribute('y2', 120 + Math.sin(a) * 110);
+        t.setAttribute('class', 'tick'); marcas.appendChild(t);
+        if (h % 3 === 0) {
+          const l = document.createElementNS(NS, 'text');
+          l.setAttribute('x', 120 + Math.cos(a) * 80); l.setAttribute('y', 120 + Math.sin(a) * 80);
+          l.textContent = h; marcas.appendChild(l);
+        }
+      }
+      const agora = new Date();
+      const y = agora.getFullYear(), m = agora.getMonth(), d = agora.getDate();
+      const alvo = new Date(y, m, d + 2);
+      const fmt = (dt) => dt.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+      q('#alvoData').textContent = fmt(alvo);
+      let horas = agora.getHours() + agora.getMinutes() / 60;
+      function pinta() {
+        const dia = Math.floor(horas / 24), resto = horas - dia * 24;
+        const dt = new Date(y, m, d + dia);
+        q('#ponteiro').setAttribute('transform', 'rotate(' + (resto * 15) + ' 120 120)');
+        const hh = Math.floor(resto), mm = Math.floor((resto - hh) * 60);
+        const hora = String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
+        q('#dataLida').textContent = fmt(dt);
+        q('#horaLida').textContent = hora + ' · ' + dt.toLocaleDateString('pt-BR');
+        svg.setAttribute('aria-valuetext', fmt(dt) + ', ' + hora);
+        if (dt.getTime() === alvo.getTime()) g.ok('Data aceita. Agora marque a devolução para o ano que vem.');
+      }
+      const ang = (e) => {
+        const r = svg.getBoundingClientRect();
+        return Math.atan2(e.clientY - r.top - r.height / 2, e.clientX - r.left - r.width / 2) * 180 / Math.PI;
+      };
+      let ultimo = null;
+      svg.addEventListener('pointerdown', (e) => { ultimo = ang(e); svg.setPointerCapture(e.pointerId); });
+      svg.addEventListener('pointermove', (e) => {
+        if (ultimo === null) return;
+        const a = ang(e);
+        let delta = a - ultimo;
+        if (delta > 180) delta -= 360;
+        if (delta < -180) delta += 360;
+        ultimo = a; horas += delta / 15; pinta();
+      });
+      svg.addEventListener('pointerup', () => { ultimo = null; });
+      svg.addEventListener('pointercancel', () => { ultimo = null; });
+      svg.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { horas += 1; pinta(); e.preventDefault(); }
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { horas -= 1; pinta(); e.preventDefault(); }
+      });
+      pinta();
+    } },
+
+    { andar: 1, titulo: 'A seta que clica pela cauda', livre: 20, lei: 'Marque as três caixas. Dentro do quadro, o clique sai da parte de trás da seta, longe da ponta.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco zona" id="zona3"><span class="rotulo" style="left:calc(22% + 32px);top:13%">via 1</span><button type="button" class="alvo quadrinho" style="left:22%;top:12%" aria-label="Assinar primeira via"></button><span class="rotulo" style="left:calc(60% + 32px);top:43%">via 2</span><button type="button" class="alvo quadrinho" style="left:60%;top:42%" aria-label="Assinar segunda via"></button><span class="rotulo" style="left:calc(32% + 32px);top:78%">via 3</span><button type="button" class="alvo quadrinho" style="left:32%;top:77%" aria-label="Assinar terceira via"></button>' + SETA + '</div><div class="linha-acao" style="margin-top:12px"><button id="virar" type="button">Virar a seta ao contrário</button><span id="perdidos">Cliques perdidos: 0</span></div>';
+      const z = q('#zona3');
+      let perdidos = 0;
+      const seta = zona(z, {
+        ax: 20, ay: 39,
+        mapa: (x, y, r, tipo) => tipo === 'mouse' ? { x, y } : { x: x + 30, y: y + 30 },
+        clique(alvo, p) {
+          if (alvo) {
+            alvo.classList.add('ok');
+            const faltam = z.querySelectorAll('.quadrinho:not(.ok)').length;
+            if (!faltam) g.ok('Três vias assinadas. Ninguém vai conseguir ler a sua assinatura.');
+            else g.msg('Via assinada. Faltam ' + faltam + '.');
+          } else if (p) {
+            perdidos++;
+            q('#perdidos').textContent = 'Cliques perdidos: ' + perdidos;
+            const m = document.createElement('span');
+            m.className = 'erro-ponto'; m.style.left = p.x + 'px'; m.style.top = p.y + 'px';
+            z.appendChild(m);
+            const marcas = z.querySelectorAll('.erro-ponto');
+            if (marcas.length > 12) marcas[0].remove();
+            if (perdidos % 4 === 0) g.erro();
+          }
+        }
+      });
+      seta.style.transformOrigin = '20px 39px';
+      let virada = false;
+      q('#virar').addEventListener('click', () => {
+        virada = !virada;
+        seta.style.transform = virada ? 'rotate(180deg)' : '';
+        q('#virar').textContent = virada ? 'Desvirar a seta' : 'Virar a seta ao contrário';
+      });
+      g.msg('Os pontos vermelhos mostram onde seus cliques caíram.');
+    } },
+
+    { andar: 1, titulo: 'Mouse invertido', livre: 15, lei: 'Dentro do quadro, a seta anda ao contrário nos dois eixos. Clique em Protocolar.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco zona" id="zona4"><button type="button" class="alvo" data-tipo="certo" style="left:12%;top:14%">Protocolar</button><button type="button" class="alvo" data-tipo="errado" style="left:46%;top:36%">Arquivar para sempre</button><button type="button" class="alvo" data-tipo="errado" style="left:14%;top:68%">Enviar ao estagiário</button>' + SETA + '</div>';
+      zona(q('#zona4'), {
+        ax: 2, ay: 2,
+        mapa: (x, y, r) => ({ x: r.width - x, y: r.height - y }),
+        clique(alvo) {
+          if (!alvo) return;
+          if (alvo.dataset.tipo === 'certo') g.ok('Protocolado. Número do protocolo: invertido.');
+          else g.erro(alvo.textContent + ': ação registrada. Para desfazer, compareça pessoalmente.');
+        }
+      });
+    } },
+
+    { andar: 1, titulo: 'Celular por barra deslizante', livre: 30, lei: 'Você tem 30 segundos para discar o número sorteado. A barra acerta dois dígitos por vez: pare no valor certo, solte, e o bloco trava. Use +1 e −1 para o ajuste fino.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco pad fone"><div class="pedido"><span>Ligue para</span> <b id="foneAlvo">(??) ?????-????</b></div><div class="cronometro"><span id="foneTempo">30,0 s</span><div class="trilho"><i id="foneTrilho"></i></div></div><output id="foneSaida" for="fone"></output><input id="fone" type="range" min="0" max="99" step="1" value="0" aria-label="Dois dígitos do telefone" disabled><div class="linha-acao"><button id="foneMenos" type="button" aria-label="Diminuir um" disabled>−1</button><button id="foneMais" type="button" aria-label="Aumentar um" disabled>+1</button><span id="foneBloco">Bloco 1 de 5</span></div><div class="linha-acao"><button id="foneComecar" type="button">Começar</button></div></div>';
+      const TOTAL = 30000, BLOCOS = [[0, 2], [3, 5], [5, 7], [7, 9], [9, 11]];
+      const r = q('#fone'), saida = q('#foneSaida');
+      const fmt = (s) => '(' + s.slice(0, 2) + ') ' + s.slice(2, 7) + '-' + s.slice(7);
+      const dois = () => String(r.value).padStart(2, '0');
+      let alvo = '', bloco = 0, fim = 0, parar = null;
+      function mostra(digitos, travados) {
+        const texto = fmt(digitos);
+        let corte = 0, vistos = 0;
+        while (vistos < travados) { if (/[\d_]/.test(texto[corte])) vistos++; corte++; }
+        const b = document.createElement('b');
+        b.textContent = texto.slice(0, corte);
+        saida.textContent = '';
+        saida.append(b, texto.slice(corte));
+      }
+      function pinta() {
+        const c = Array(11).fill('_');
+        if (!alvo) { mostra(c.join(''), 0); return; }
+        const [a, z] = BLOCOS[bloco];
+        for (let i = 0; i < a; i++) c[i] = alvo[i];
+        c[2] = '9';
+        const s = dois();
+        c[a] = s[0]; c[z - 1] = s[1];
+        q('#foneBloco').textContent = 'Bloco ' + (bloco + 1) + ' de ' + BLOCOS.length;
+        mostra(c.join(''), a);
+      }
+      function trava(on) {
+        r.disabled = !on;
+        q('#foneMais').disabled = !on; q('#foneMenos').disabled = !on;
+        q('#foneComecar').disabled = on;
+      }
+      function encerra() { if (parar) parar(); alvo = ''; trava(false); }
+      function confere() {
+        if (!alvo) return;
+        const [a, z] = BLOCOS[bloco];
+        if (dois() !== alvo.slice(a, z)) return;
+        if (bloco === BLOCOS.length - 1) {
+          const numero = alvo, sobrou = q('#foneTempo').textContent;
+          encerra();
+          mostra(numero, 11);
+          g.ok('Chamando. Sobraram ' + sobrou + '. A ligação caiu na caixa postal.');
+          return;
+        }
+        bloco++;
+        r.value = 0;
+        pinta();
+        confere();
+      }
+      const soma = (n) => { r.value = Number(r.value) + n; pinta(); confere(); };
+      function tempo() {
+        const resta = Math.max(0, fim - performance.now());
+        q('#foneTempo').textContent = (resta / 1000).toFixed(1).replace('.', ',') + ' s';
+        q('#foneTrilho').style.width = (resta / TOTAL * 100) + '%';
+        if (resta <= 0) {
+          encerra(); pinta();
+          q('#foneComecar').textContent = 'Tentar de novo';
+          g.erro('Tempo esgotado. O número mudou de dono.');
+        }
+      }
+      r.addEventListener('input', pinta);
+      r.addEventListener('change', confere);
+      q('#foneMais').addEventListener('click', () => soma(1));
+      q('#foneMenos').addEventListener('click', () => soma(-1));
+      q('#foneComecar').addEventListener('click', () => {
+        const ddd = 11 + Math.floor(Math.random() * 89);
+        alvo = ddd + '9' + String(Math.floor(Math.random() * 1e8)).padStart(8, '0');
+        q('#foneAlvo').textContent = fmt(alvo);
+        bloco = 0; r.value = 0;
+        trava(true);
+        pinta();
+        g.msg('Valendo. Blocos travados ficam azuis.');
+        fim = performance.now() + TOTAL;
+        parar = g.iv(tempo, 100);
+        tempo();
+        confere();
+      });
+      pinta();
+    } },
+
+    { andar: 1, titulo: 'Nome completo na roleta', livre: 45, lei: 'As letras passam em ordem aleatória. Exigência: soletre GUSTAVOWEB e salve. Errou uma letra, apaga tudo.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco roleta"><div class="letra" id="letra" aria-hidden="true">A</div><div><div class="nome" id="nome" aria-label="Nome digitado"></div><div class="linha-acao"><button id="parar" type="button">Parar</button><button id="apagar" type="button">Apagar tudo</button><button id="salvar" type="button">Salvar</button></div></div></div>';
+      const abc = embaralha('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''));
+      let i = 0;
+      const lento = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      g.iv(() => { i = (i + 1) % abc.length; q('#letra').textContent = abc[i]; }, lento ? 600 : 170);
+      q('#parar').addEventListener('click', () => { q('#nome').textContent += abc[i]; });
+      q('#apagar').addEventListener('click', () => { q('#nome').textContent = ''; g.msg('Nome apagado. Tudo.'); });
+      q('#salvar').addEventListener('click', () => {
+        if (q('#nome').textContent.trim() !== 'GUSTAVOWEB') { g.erro('Nome não confere com o cadastro. O sistema aguarda GUSTAVOWEB.'); return; }
+        g.ok('Cadastro salvo como GUSTAVOWEB. Confere com o seu RG? Agora é tarde.');
+      });
+    } },
+
+    { andar: 1, titulo: 'Volume por gravidade', livre: 20, lei: 'Segure para inclinar a barra e a bolinha rolar. Mantenha na faixa azul, entre 65% e 85%, por quase um segundo. Passou da ponta, ela cai.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco volume"><span class="valor" id="volValor">0%</span><div class="barra" id="barra"><span class="faixa"></span><span class="bola" id="bola"></span></div></div><div class="linha-acao" style="margin-top:12px"><button id="inclinar" type="button">Segure para inclinar</button></div>';
+      const barra = q('#barra'), bola = q('#bola'), b = q('#inclinar');
+      let x = 0, v = 0, ang = -7, segura = false, naFaixa = 0, t0 = 0, feito = false;
+      b.addEventListener('pointerdown', (e) => { segura = true; try { b.setPointerCapture(e.pointerId); } catch (_) {} });
+      b.addEventListener('pointerup', () => { segura = false; });
+      b.addEventListener('pointercancel', () => { segura = false; });
+      b.addEventListener('keydown', (e) => { if (e.key === ' ' || e.key === 'Enter') { segura = true; e.preventDefault(); } });
+      b.addEventListener('keyup', () => { segura = false; });
+      b.addEventListener('blur', () => { segura = false; });
+      g.raf((t) => {
+        const dt = Math.min((t - t0) / 16.67, 3) || 1; t0 = t;
+        ang += ((segura ? 12 : -7) - ang) * 0.09 * dt;
+        v += Math.sin(ang * Math.PI / 180) * 0.0016 * dt;
+        v *= Math.pow(0.965, dt);
+        x += v * dt;
+        if (x < 0) { x = 0; v = 0; }
+        if (x > 1.03) { x = 0; v = 0; naFaixa = 0; g.erro('A bolinha caiu. O volume voltou a zero.'); }
+        barra.style.transform = 'rotate(' + ang.toFixed(2) + 'deg)';
+        bola.style.left = Math.min(x, 1.03) * 100 + '%';
+        const p = Math.round(Math.min(x, 1) * 100);
+        q('#volValor').textContent = p + '%';
+        if (p >= 65 && p <= 85) {
+          naFaixa += dt * 16.67;
+          if (naFaixa > 800 && !feito) { feito = true; g.ok('Volume ajustado. Sua música já acabou.'); }
+        } else naFaixa = 0;
+      });
+    } },
+
+    { andar: 1, titulo: 'Modo escuro', livre: 20, lei: 'Ative o modo escuro para descansar a vista. Se precisar sair da tela branca sem achar a saída, a tecla Esc funciona, mas conta como erro.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco pad"><div class="linha-acao"><button id="escuro" type="button">Ativar modo escuro</button></div></div>';
+      q('#escuro').addEventListener('click', () => {
+        const tela = document.createElement('div');
+        tela.className = 'branco';
+        tela.innerHTML = '<button type="button">Desligar modo escuro</button>';
+        const b = tela.firstChild;
+        b.style.left = (8 + Math.random() * 62) + '%';
+        b.style.top = (10 + Math.random() * 70) + '%';
+        document.body.appendChild(tela);
+        const sai = (e) => { if (e.key === 'Escape') { tira(); g.erro('Saída de emergência usada.'); } };
+        const tira = () => { tela.remove(); document.removeEventListener('keydown', sai); };
+        document.addEventListener('keydown', sai);
+        g.limpa(tira);
+        b.addEventListener('click', () => { tira(); g.ok('Modo escuro desativado. Ele estava ligado, segundo o gerente.'); });
+      });
+    } },
+
+    { andar: 1, titulo: 'Dupla negação obrigatória', livre: 15, lei: 'Responda com atenção. Os botões trocam de lugar, e nenhuma resposta significa o que parece.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco pad"><p class="dialogo-p" id="pergunta"></p><div class="linha-acao igual" id="respostas"></div></div>';
+      const perguntas = [
+        ['Deseja não cancelar a desistência do cancelamento?', 'Sim, não quero', 'Não, quero sim'],
+        ['Tem certeza de que não está incerto?', 'Não tenho', 'Tenho que não'],
+        ['Se não concorda em discordar, clique em não discordar.', 'Não discordar', 'Discordar de não'],
+        ['Clique em Cancelar para confirmar, ou em Confirmar para cancelar.', 'Cancelar', 'Confirmar']
+      ];
+      let i = 0;
+      function pinta() {
+        const [p, a, b] = perguntas[i];
+        q('#pergunta').textContent = p;
+        const box = q('#respostas');
+        box.textContent = '';
+        (i % 2 ? [b, a] : [a, b]).forEach((txt) => {
+          const bt = document.createElement('button');
+          bt.type = 'button'; bt.textContent = txt;
+          bt.addEventListener('click', responde);
+          box.appendChild(bt);
+        });
+      }
+      function responde() {
+        i++;
+        if (i === perguntas.length) { g.ok('Decisão registrada: o contrário do que você pensou.'); return; }
+        g.msg('Resposta ' + i + ' de ' + perguntas.length + ' registrada como: talvez.');
+        pinta();
+      }
+      pinta();
+    } },
+
+    { andar: 2, titulo: 'Erro 404 humano', livre: 25, lei: 'Erro 404: desenvolvedor não encontrado. Reinicie o programador e sirva o café na medida, entre as linhas tracejadas. Transbordou, perdeu.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco pad"><div class="linha-acao"><button id="reiniciar" type="button">Reiniciar Dev</button></div><div class="trilho"><i id="bootBarra"></i></div><div id="cafe" hidden class="pad"><div class="xicara"><i id="cafeNivel"></i><span class="meta"></span></div><div class="linha-acao" style="justify-content:center"><button id="servir" type="button">Segure para servir</button></div></div></div>';
+      let nivel = 0, segura = false, ativo = false;
+      q('#reiniciar').addEventListener('click', () => {
+        q('#reiniciar').disabled = true;
+        let p = 0;
+        const para = g.iv(() => {
+          p += 12;
+          q('#bootBarra').style.width = Math.min(p, 96) + '%';
+          if (p >= 96) {
+            para();
+            g.msg('Erro: café insuficiente para inicialização.');
+            q('#cafe').hidden = false;
+            ativo = true;
+          }
+        }, 120);
+      });
+      const b = q('#servir');
+      const solta = () => {
+        if (!segura) return;
+        segura = false;
+        if (nivel >= 70 && nivel <= 90) g.ok('Dev inicializado. Ele já foi buscar outro café.');
+        else if (nivel > 0) { g.erro(nivel < 70 ? 'Pouco café. O dev abriu um olho e voltou a dormir.' : 'Café demais. O dev agora refatora tudo em Rust.'); nivel = 0; q('#cafeNivel').style.height = '0'; }
+      };
+      b.addEventListener('pointerdown', (e) => { segura = true; try { b.setPointerCapture(e.pointerId); } catch (_) {} });
+      b.addEventListener('pointerup', solta);
+      b.addEventListener('pointercancel', solta);
+      b.addEventListener('keydown', (e) => { if (e.key === ' ' || e.key === 'Enter') { segura = true; e.preventDefault(); } });
+      b.addEventListener('keyup', solta);
+      g.raf(() => {
+        if (!ativo || !segura) return;
+        nivel += 0.8;
+        if (nivel > 100) { nivel = 0; segura = false; g.erro('Transbordou. Limpe o teclado e sirva de novo.'); }
+        q('#cafeNivel').style.height = nivel + '%';
+      });
+    } },
+
+    { andar: 2, titulo: 'Debug simulator', livre: 30, lei: 'Clique na linha com o bug. São três arquivos, e cada linha errada escolhida custa pontos.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco"><div class="num" style="padding:6px 12px" id="arquivo"></div><div class="codigo" id="codigo"></div></div><div class="terminal" id="term" style="height:130px;margin-top:12px"></div><div class="linha-acao" style="margin-top:12px"><button id="run" type="button" hidden>Run</button></div>';
+      const provas = [
+        { f: 'somaCafes.js', l: ['function somaCafes(lista) {', '  let total = 0;', '  for (let i = 0; i <= lista.length; i++) {', '    total += lista[i];', '  }', '  return total;', '}'], b: 2, m: 'O laço passava uma posição do fim da lista.' },
+        { f: 'temCafe.js', l: ['function temCafe(xicaras) {', '  if (xicaras = 0) {', '    return false;', '  }', '  return true;', '}'], b: 1, m: 'Atribuição dentro do if. Faltaram dois sinais de igual.' },
+        { f: 'apelido.js', l: ['function apelido() {', '  const nome = "Gustavo";', '  nome = "Gus";', '  return nome;', '}'], b: 2, m: 'Constante não aceita novo valor.' }
+      ];
+      const term = q('#term');
+      let i = 0;
+      function monta() {
+        const p = provas[i];
+        q('#arquivo').textContent = p.f;
+        const box = q('#codigo');
+        box.textContent = '';
+        p.l.forEach((txt, k) => {
+          const b = document.createElement('button');
+          b.type = 'button'; b.textContent = (k + 1) + '  ' + txt;
+          b.addEventListener('click', () => {
+            if (k !== p.b) { b.classList.add('errada'); imprime(term, 'Linha ' + (k + 1) + ': esta linha é inocente.', true); g.erro(); return; }
+            imprime(term, 'Corrigido: ' + p.m);
+            i++;
+            if (i < provas.length) monta();
+            else { box.textContent = ''; q('#arquivo').textContent = 'Tudo corrigido'; q('#run').hidden = false; g.msg('Agora rode o projeto.'); }
+          });
+          box.appendChild(b);
+        });
+      }
+      q('#run').addEventListener('click', () => {
+        q('#run').disabled = true;
+        const linhas = ['Compilando...', 'Analisando código...', 'Encontrado 1 erro.'];
+        linhas.forEach((t, k) => g.to(() => imprime(term, t), 350 * k));
+        g.to(() => { imprime(term, 'Erro: você esqueceu de tomar café.', true); g.ok('Compilou depois do café. Funciona na sua máquina.'); }, 1100);
+      });
+      imprime(term, 'Aguardando você encontrar o bug.');
+      monta();
+    } },
+
+    { andar: 2, titulo: 'Fórum do Transbordo', livre: 25, lei: 'Pesquise sua dúvida até alguém responder alguma coisa útil. Escreva uma pergunta diferente a cada vez.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco pad"><label for="duvida">Sua dúvida</label><input id="duvida" type="text" autocomplete="off"><div class="linha-acao"><button id="pesquisar" type="button">Pesquisar</button></div><div id="resposta" class="dialogo-p" aria-live="polite"></div></div>';
+      const respostas = ['Sua pergunta já foi respondida. Resposta: tente pesquisar no Google.', 'Marcada como duplicata de uma pergunta de 2011, sobre outro assunto.', 'Fechada por falta de foco. Um usuário comentou: "por que você quer fazer isso?"'];
+      let i = 0, ultima = '';
+      function pesquisa() {
+        const v = q('#duvida').value.trim().toLowerCase();
+        if (!v) { g.msg('Pergunta vazia também é fechada, mas escreva alguma coisa.'); return; }
+        if (v === ultima) { g.msg('Essa pergunta você já fez. Mude alguma coisa.'); return; }
+        ultima = v;
+        if (i === respostas.length) { q('#resposta').textContent = 'Resolvido por você mesmo. Era um ponto e vírgula.'; g.ok('Sua resposta recebeu dois votos negativos.'); return; }
+        q('#resposta').textContent = respostas[i++];
+        q('#duvida').value = '';
+      }
+      q('#pesquisar').addEventListener('click', pesquisa);
+      q('#duvida').addEventListener('keydown', (e) => { if (e.key === 'Enter') pesquisa(); });
+    } },
+
+    { andar: 2, titulo: 'Git conflict simulator', livre: 20, lei: 'Resolva o conflito de merge. Qualquer escolha serve. Nenhuma resolve.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco pad"><pre class="conflito" id="conflito"></pre><div class="linha-acao" id="escolhas"></div></div>';
+      const casos = [['const cor = "azul";', 'const cor = "verde";'], ['const prazo = "sexta";', 'const prazo = "ontem";'], ['// TODO: arrumar depois', '// TODO: arrumar antes']];
+      let i = 0;
+      function monta() {
+        const [a, b] = casos[i];
+        const pre = q('#conflito');
+        pre.textContent = '';
+        [['<<<<<<< HEAD', 1], [a, 0], ['=======', 1], [b, 0], ['>>>>>>> feature/agora-vai', 1]].forEach(([t, m]) => {
+          const s = document.createElement('span');
+          if (m) s.className = 'marca';
+          s.textContent = t + '\n';
+          pre.appendChild(s);
+        });
+        const box = q('#escolhas');
+        box.textContent = '';
+        ['Manter o meu', 'Aceitar o deles', 'Manter os dois'].forEach((t) => {
+          const bt = document.createElement('button');
+          bt.type = 'button'; bt.textContent = t;
+          bt.addEventListener('click', () => {
+            i++;
+            if (i < casos.length) { g.msg('Conflito resolvido. Apareceu outro.'); monta(); return; }
+            pre.textContent = 'CONFLICT (content): Merge conflict detected.\n\nSugestão: apague o repositório e comece novamente.';
+            box.textContent = '';
+            const fim = document.createElement('button');
+            fim.type = 'button'; fim.textContent = 'Apagar o repositório';
+            fim.addEventListener('click', () => g.ok('Repositório apagado. Seu histórico de commits agradece.'));
+            box.appendChild(fim);
+          });
+          box.appendChild(bt);
+        });
+      }
+      monta();
+    } },
+
+    { andar: 2, titulo: 'NPM install simulator', livre: 35, lei: 'Digite exatamente o comando que o terminal pedir e aperte Enter. Cada comando errado custa pontos.', montar(el, g, q) {
+      el.innerHTML = '<div class="terminal" id="term"></div><div class="prompt" style="margin-top:12px"><label for="cmd">$</label><input id="cmd" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" disabled></div>';
+      const term = q('#term'), cmd = q('#cmd');
+      const passos = [
+        { c: 'npm install', depois: ['ERROR: Dependency not found.', 'Trying to install dependency for dependency...'] },
+        { c: 'rm -rf node_modules', depois: ['Removed 214.532 files. Your disk is breathing.'] },
+        { c: 'npm install --force', depois: [] }
+      ];
+      let i = 0;
+      function pede() { imprime(term, 'Sugestão: ' + passos[i].c); cmd.disabled = false; cmd.value = ''; cmd.focus(); }
+      function baixa(fim) {
+        let n = 1;
+        const para = g.iv(() => {
+          imprime(term, 'Downloading package ' + n + '/1342...');
+          n += 1 + Math.floor(n / 2);
+          if (n > 1342 || term.childElementCount > 14) { para(); fim(); }
+        }, 110);
+      }
+      cmd.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter') return;
+        const v = cmd.value.trim();
+        imprime(term, '$ ' + v);
+        if (v !== passos[i].c) { imprime(term, 'command not found: ' + (v || 'vontade de viver'), true); g.erro(); cmd.value = ''; return; }
+        cmd.disabled = true;
+        const p = passos[i];
+        const segue = () => {
+          p.depois.forEach((t, k) => imprime(term, t, k === 0 && i === 0));
+          i++;
+          if (i === passos.length) { imprime(term, 'added 1342 packages, 87 vulnerabilities'); g.ok('Instalado. São 400 MB para centralizar uma div.'); return; }
+          pede();
+        };
+        if (i === 1) segue(); else baixa(segue);
+      });
+      imprime(term, 'Bem-vindo ao projeto. Boa sorte.');
+      pede();
+    } },
+
+    { andar: 2, titulo: 'Deploy simulator', livre: 20, lei: 'Faça o deploy e descubra por que o site não abre, mesmo com tudo verde. Cada palpite errado custa pontos.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco pad"><div class="linha-acao"><button id="deploy" type="button">Fazer deploy</button></div><div class="terminal" id="term" style="height:110px"></div><div class="site-fora" id="site">Sem deploy</div><div class="linha-acao" id="palpites" hidden></div></div>';
+      const term = q('#term');
+      q('#deploy').addEventListener('click', () => {
+        q('#deploy').disabled = true;
+        ['Build concluído', 'Testes aprovados (0 de 0)', 'Deploy concluído com sucesso'].forEach((t, k) => g.to(() => imprime(term, '✔ ' + t), 250 * k));
+        g.to(() => {
+          q('#site').textContent = '502 Bad Gateway';
+          q('#palpites').hidden = false;
+          g.msg('Tudo verde no painel. O site está fora do ar.');
+        }, 900);
+      });
+      [['Limpar o cache', 'Cache limpo. Agora o erro carrega mais rápido.'], ['Reiniciar o servidor', 'Reiniciado. O erro voltou descansado.'], ['Fazer rollback', 'Rollback feito. O erro é mais antigo do que parecia.'], ['Conferir o DNS', '']].forEach(([t, m]) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.textContent = t;
+        b.addEventListener('click', () => {
+          if (m) { g.erro(m); b.disabled = true; return; }
+          q('#site').textContent = 'No ar';
+          g.ok('Era o DNS. Sempre é o DNS.');
+        });
+        q('#palpites').appendChild(b);
+      });
+    } },
+
+    { andar: 2, titulo: 'Calculadora burra', livre: 25, lei: 'Faça o visor mostrar 10 usando uma soma. A calculadora tem um defeito constante. Descubra qual.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco pad calc"><div class="visor" id="visor">0</div><div class="teclas" id="teclas"></div></div>';
+      let conta = '';
+      const visor = q('#visor');
+      '789+456=123C0'.split('').forEach((t) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.textContent = t;
+        b.addEventListener('click', () => {
+          if (t === 'C') { conta = ''; visor.textContent = '0'; return; }
+          if (t === '=') {
+            const m = conta.match(/^(\d+)\+(\d+)$/);
+            if (!m) { visor.textContent = 'Erro'; g.msg('Escreva uma soma, como 2+2.'); conta = ''; return; }
+            const r = Number(m[1]) + Number(m[2]) + 1;
+            visor.textContent = String(r);
+            conta = '';
+            if (r === 10) g.ok('Dez, segundo a calculadora. O financeiro aprovou.');
+            else g.msg(m[1] + ' + ' + m[2] + ' = ' + r + '. Confere?');
+            return;
+          }
+          conta += t;
+          visor.textContent = conta;
+        });
+        q('#teclas').appendChild(b);
+      });
+    } },
+
+    { andar: 2, titulo: 'Tradutor de dev', livre: 20, lei: 'Traduza do dialeto do programador para o português real. Erros custam pontos.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco pad"><p class="dialogo-p" id="frase"></p><div style="display:grid;gap:8px" id="opcoes"></div></div>';
+      const qs = [
+        ['"Funciona na minha máquina."', 'O problema agora é seu.', ['O sistema foi testado em produção.', 'Vamos enviar a máquina para o cliente.']],
+        ['"É só um ajuste rápido."', 'Reserve a semana.', ['Ficará pronto em cinco minutos.', 'Já está corrigido.']],
+        ['"Está 90% pronto."', 'Faltam os outros 90%.', ['Falta revisar um detalhe.', 'Já pode publicar.']],
+        ['"Isso é uma feature."', 'É um bug e eu não vou mexer nele.', ['Foi aprovado pelo cliente.', 'Está na documentação.']]
+      ];
+      let i = 0;
+      function monta() {
+        const [f, certa, erradas] = qs[i];
+        q('#frase').textContent = f;
+        const box = q('#opcoes');
+        box.textContent = '';
+        embaralha([certa, ...erradas]).forEach((t) => {
+          const b = document.createElement('button');
+          b.type = 'button'; b.textContent = t; b.style.textAlign = 'left';
+          b.addEventListener('click', () => {
+            if (t !== certa) { b.disabled = true; g.erro('Tradução muito otimista.'); return; }
+            i++;
+            if (i === qs.length) g.ok('Você já está pronto para ler uma daily inteira.');
+            else { g.msg('Correto.'); monta(); }
+          });
+          box.appendChild(b);
+        });
+      }
+      monta();
+    } },
+
+    { andar: 2, titulo: 'Aguardando homologação', livre: 40, lei: 'Último guichê. Envie o requerimento e acompanhe. O botão Acelerar faz exatamente o que uma repartição faria.', montar(el, g, q) {
+      el.innerHTML = '<div class="palco pad"><div class="pct" id="pct">0%</div><div class="trilho"><i id="trilho"></i></div><div class="recado" id="recado">Nada enviado até agora.</div><div class="linha-acao"><button id="enviar" type="button">Enviar</button><button id="acelerar" type="button" disabled>Acelerar</button></div></div>';
+      const recados = ['Faltam 3 minutos.', 'Faltam 4 horas.', 'Faltam 2 minutos.', 'Faltam 11 dias.', 'Reconhecendo firma.', 'Aguardando o estagiário voltar do almoço.', 'Faltam 40 segundos.', 'Faltam 40 segundos.'];
+      let pct = 0, voltou = false, r = 0, para = null;
+      const pinta = (t) => { q('#pct').textContent = t || Math.floor(pct) + '%'; q('#trilho').style.width = Math.min(pct, 100) + '%'; };
+      function zeno() {
+        let n = 1;
+        q('#acelerar').disabled = true;
+        const fim = g.iv(() => {
+          pinta('99,' + '9'.repeat(n) + '%');
+          n++;
+          if (n > 6) {
+            fim(); pct = 100; pinta();
+            q('#recado').textContent = 'Erro 0: nenhum erro. Por favor, envie novamente.';
+            g.ok('Envio concluído e perdido, nessa ordem.');
+          }
+        }, 450);
+      }
+      q('#enviar').addEventListener('click', () => {
+        q('#enviar').disabled = true; q('#acelerar').disabled = false;
+        para = g.iv(() => {
+          pct += (100 - pct) * 0.12 + 1.5 + Math.random();
+          if (pct >= 99 && !voltou) { voltou = true; pct = 1; q('#recado').textContent = 'Encontramos mais trabalho.'; }
+          else if (Math.random() < 0.25) q('#recado').textContent = recados[r++ % recados.length];
+          if (pct >= 99) { pct = 99; pinta(); para(); q('#recado').textContent = 'Quase.'; zeno(); return; }
+          pinta();
+        }, 250);
+      });
+      q('#acelerar').addEventListener('click', () => {
+        pct = Math.max(0, pct - 5); pinta();
+        g.erro('Pedido de urgência anexado. A fila agora inclui o seu pedido.');
+      });
+    } }
+  ];
+
+  /* ---------- Motor do jogo ---------- */
+  const est = { nome: '', i: 0, pontos: 0, tempo: 0, pulos: 0, base: 0, erros: 0, ativo: false };
+  let g = null, relogioHud = null;
+
+  function criaGuiche() {
+    const f = { vivo: true, feito: false, limpezas: [] };
+    f.msg = (t) => { if (f.vivo && !f.feito) $('status').textContent = t; };
+    f.erro = (t) => { if (!f.vivo || f.feito) return; est.erros++; if (t) $('status').textContent = t; };
+    f.iv = (fn, ms) => {
+      const id = setInterval(() => { if (f.vivo) fn(); }, ms);
+      const para = () => clearInterval(id);
+      f.limpezas.push(para);
+      return para;
+    };
+    f.to = (fn, ms) => {
+      const id = setTimeout(() => { if (f.vivo) fn(); }, ms);
+      f.limpezas.push(() => clearTimeout(id));
+    };
+    f.raf = (fn) => {
+      const passo = (t) => { if (!f.vivo || f.feito) return; fn(t); requestAnimationFrame(passo); };
+      requestAnimationFrame(passo);
+    };
+    f.limpa = (fn) => f.limpezas.push(fn);
+    f.ok = (t) => {
+      if (!f.vivo || f.feito) return;
+      f.feito = true;
+      const ms = performance.now() - est.base;
+      est.tempo += ms;
+      const pts = Math.max(200, Math.min(1000, Math.round(1000 - est.erros * 50 - Math.max(0, ms / 1000 - FASES[est.i].livre) * 8)));
+      est.pontos += pts;
+      $('status').textContent = t;
+      $('campo').classList.add('feito');
+      $('carimbo').textContent = 'DEFERIDO';
+      $('ganho').textContent = '+' + milhar(pts) + ' pontos';
+      $('proximo').hidden = false;
+      $('pular').disabled = true;
+      setTimeout(() => { if (!$('proximo').hidden) $('proximo').focus({ preventScroll: true }); }, 500);
+      hud();
+    };
+    return f;
+  }
+  function encerraGuiche() {
+    if (!g) return;
+    g.vivo = false;
+    g.limpezas.forEach((fn) => fn());
+    g = null;
+  }
+  function hud() {
+    const corrido = est.tempo + (g && !g.feito ? performance.now() - est.base : 0);
+    $('hudGuiche').textContent = 'Guichê ' + (est.i + 1) + ' de ' + FASES.length;
+    $('hudTempo').textContent = relogio(corrido);
+    $('hudPontos').textContent = milhar(est.pontos) + ' pontos';
+    $('hudBarra').style.width = (est.i / FASES.length * 100) + '%';
+  }
+  function abre(i) {
+    encerraGuiche();
+    est.i = i; est.erros = 0; est.base = performance.now();
+    const f = FASES[i];
+    const campo = $('campo');
+    campo.classList.remove('feito', 'pulado');
+    $('carimbo').textContent = 'PENDENTE';
+    $('faseNum').textContent = ANDARES[f.andar];
+    $('faseTitulo').textContent = f.titulo;
+    $('faseLei').textContent = f.lei;
+    $('status').textContent = '';
+    $('ganho').textContent = '';
+    $('proximo').hidden = true;
+    $('proximo').textContent = i === FASES.length - 1 ? 'Ver parecer final' : 'Próximo guichê';
+    $('pular').disabled = false;
+    const el = $('fase');
+    el.textContent = '';
+    g = criaGuiche();
+    f.montar(el, g, (s) => el.querySelector(s));
+    hud();
+    $('hud').scrollIntoView({ block: 'start' });
+  }
+  function avanca() {
+    if (est.i + 1 < FASES.length) abre(est.i + 1);
+    else termina();
+  }
+  function telas(nome) {
+    ['inicio', 'jogo', 'fim'].forEach((t) => { $(t).hidden = t !== nome; });
+    $('hud').hidden = nome !== 'jogo';
+  }
+  function comeca() {
+    est.nome = $('nomeJogador').value.trim().slice(0, 20) || 'Requerente anônimo';
+    guarda('ux-hostil-nome', est.nome);
+    est.pontos = 0; est.tempo = 0; est.pulos = 0;
+    telas('jogo');
+    clearInterval(relogioHud);
+    relogioHud = setInterval(hud, 250);
+    abre(0);
+  }
+  function termina() {
+    encerraGuiche();
+    clearInterval(relogioHud);
+    telas('fim');
+    const p = est.pontos;
+    const [titulo, texto] = p >= 20000 ? ['Servidor exemplar', 'Você venceu a repartição. Sua recompensa é mais trabalho.']
+      : p >= 14000 ? ['Concursado', 'Passou por quase tudo e já desconfia de qualquer botão.']
+      : p >= 7000 ? ['Estagiário', 'Sobreviveu, mas o café ainda é por sua conta.']
+      : ['Requerente desistente', 'Sua desistência foi protocolada. Volte amanhã com uma cópia.'];
+    $('fimTitulo').textContent = titulo;
+    $('fimTexto').textContent = texto;
+    $('fimPontos').textContent = milhar(p);
+    $('fimTempo').textContent = relogio(est.tempo);
+    $('fimPulos').textContent = String(est.pulos);
+    registra({ nome: est.nome, pontos: p, tempo: Math.round(est.tempo), pulos: est.pulos, em: new Date().toISOString() });
+    window.scrollTo(0, 0);
+  }
+
+  $('comecar').addEventListener('click', comeca);
+  $('nomeJogador').addEventListener('keydown', (e) => { if (e.key === 'Enter') comeca(); });
+  $('proximo').addEventListener('click', avanca);
+  $('denovo').addEventListener('click', comeca);
+  $('voltar').addEventListener('click', () => { telas('inicio'); window.scrollTo(0, 0); });
+  $('pular').addEventListener('click', () => {
+    if (!g || g.feito) return;
+    g.feito = true;
+    est.tempo += performance.now() - est.base;
+    est.pulos++;
+    $('campo').classList.add('feito', 'pulado');
+    $('carimbo').textContent = 'INDEFERIDO';
+    $('status').textContent = 'Guichê pulado. Ninguém aqui vai sentir falta.';
+    $('ganho').textContent = '+0 pontos';
+    $('proximo').hidden = false;
+    $('pular').disabled = true;
+    g.limpezas.forEach((fn) => fn());
+    g.limpezas = [];
   });
 
-  /* 05 Botão fugitivo */
-  (function () {
-    const palco = $('fuga'), b = $('fugitivo');
-    const LIMITE = 9;
-    let fugas = 0, manteve = 0;
-    function foge() {
-      if (fugas >= LIMITE) return;
-      fugas++;
-      const w = palco.clientWidth - b.offsetWidth - 8, h = palco.clientHeight - b.offsetHeight - 66;
-      b.style.left = (4 + Math.random() * Math.max(w, 1)) + 'px';
-      b.style.top = (62 + Math.random() * Math.max(h, 1)) + 'px';
-      if (fugas === LIMITE) { b.textContent = 'cansei, pode clicar'; $('s5').textContent = 'O link parou para respirar.'; }
+  /* ---------- Ranking ---------- */
+  const CHAVE = 'ux-hostil-ranking';
+  let geral = null, meuId = null, banco = null, meuUltimo = null;
+  function le(k) { try { return localStorage.getItem(k); } catch (_) { return null; } }
+  function guarda(k, v) { try { localStorage.setItem(k, v); } catch (_) {} }
+  function locais() {
+    try {
+      const l = JSON.parse(le(CHAVE) || '[]');
+      return Array.isArray(l) ? l : [];
+    } catch (_) { return []; }
+  }
+  function ordena(l) {
+    return l.slice().sort((a, b) => (b.pontos - a.pontos) || (a.tempo - b.tempo)).slice(0, 20);
+  }
+  function tabela(destino, linhas) {
+    destino.textContent = '';
+    if (!linhas.length) {
+      const p = document.createElement('p');
+      p.className = 'nota';
+      p.textContent = 'Nenhum requerente concluiu o expediente ainda. Seja o primeiro.';
+      destino.appendChild(p);
+      return;
     }
-    palco.addEventListener('pointermove', (e) => {
-      const r = b.getBoundingClientRect();
-      const d = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2));
-      if (d < 90) foge();
-    });
-    b.addEventListener('pointerdown', (e) => { if (fugas < LIMITE) { e.preventDefault(); foge(); } });
-    b.addEventListener('click', () => carimbar(5, 'Cancelamento recebido. Sua assinatura termina em 2041.'));
-    $('manter').addEventListener('click', () => {
-      manteve++;
-      $('s5').textContent = 'Obrigado! Plano renovado por mais ' + (manteve * 12) + ' meses.';
-    });
-  })();
-
-  /* 06 Telefone */
-  (function () {
-    const TOTAL = 30000;
-    const BLOCOS = [[0, 2], [3, 5], [5, 7], [7, 9], [9, 11]];
-    const r = $('fone'), saida = $('foneSaida');
-    const fmt = (s) => '(' + s.slice(0, 2) + ') ' + s.slice(2, 7) + '-' + s.slice(7);
-    const doisDigitos = () => String(r.value).padStart(2, '0');
-    let alvo = '', bloco = 0, fim = 0, timer = null;
-
-    r.min = 0; r.max = 99; r.value = 0;
-
-    function mostra(digitos, travados) {
-      const texto = fmt(digitos);
-      let corte = 0, vistos = 0;
-      while (vistos < travados) { if (/[\d_]/.test(texto[corte])) vistos++; corte++; }
-      const b = document.createElement('b');
-      b.textContent = texto.slice(0, corte);
-      saida.textContent = '';
-      saida.append(b, texto.slice(corte));
-    }
-    function pinta() {
-      const c = Array(11).fill('_');
-      if (!alvo) { mostra(c.join(''), 0); return; }
-      const [a, z] = BLOCOS[bloco];
-      for (let i = 0; i < a; i++) c[i] = alvo[i];
-      c[2] = '9';
-      const s = doisDigitos();
-      c[a] = s[0]; c[z - 1] = s[1];
-      $('foneBloco').textContent = 'Bloco ' + (bloco + 1) + ' de ' + BLOCOS.length;
-      mostra(c.join(''), a);
-    }
-    function confere() {
-      if (!alvo) return;
-      const [a, z] = BLOCOS[bloco];
-      if (doisDigitos() !== alvo.slice(a, z)) return;
-      if (bloco === BLOCOS.length - 1) {
-        const numero = alvo, sobrou = $('foneTempo').textContent;
-        encerra('', 'Jogar de novo');
-        mostra(numero, 11);
-        carimbar(6, 'Chamando. Sobraram ' + sobrou + '. A ligação caiu na caixa postal.');
-        return;
-      }
-      bloco++;
-      r.value = 0;
-      pinta();
-      confere();
-    }
-    function soma(n) {
-      r.value = Number(r.value) + n;
-      pinta();
-      confere();
-    }
-    function tempo() {
-      const resta = Math.max(0, fim - performance.now());
-      $('foneTempo').textContent = (resta / 1000).toFixed(1).replace('.', ',') + ' s';
-      $('foneTrilho').style.width = (resta / TOTAL * 100) + '%';
-      if (resta <= 0) encerra('Tempo esgotado. O número mudou de dono.', 'Tentar de novo');
-    }
-    function encerra(msg, rotulo) {
-      clearInterval(timer);
-      alvo = '';
-      r.disabled = true;
-      $('foneMais').disabled = true; $('foneMenos').disabled = true;
-      $('foneComecar').disabled = false; $('foneComecar').textContent = rotulo;
-      pinta();
-      if (msg) $('s6').textContent = msg;
-    }
-    r.addEventListener('input', pinta);
-    r.addEventListener('change', confere);
-    $('foneMais').addEventListener('click', () => soma(1));
-    $('foneMenos').addEventListener('click', () => soma(-1));
-    $('foneComecar').addEventListener('click', () => {
-      const ddd = 11 + Math.floor(Math.random() * 89);
-      alvo = ddd + '9' + String(Math.floor(Math.random() * 1e8)).padStart(8, '0');
-      $('foneAlvo').textContent = fmt(alvo);
-      bloco = 0;
-      r.value = 0;
-      r.disabled = false; $('foneMais').disabled = false; $('foneMenos').disabled = false;
-      $('foneComecar').disabled = true;
-      pinta();
-      $('s6').textContent = 'Valendo. Blocos travados ficam azuis.';
-      fim = performance.now() + TOTAL;
-      clearInterval(timer);
-      timer = setInterval(tempo, 100);
-      tempo();
-      confere();
-    });
-    pinta();
-  })();
-
-  /* 07 Senha */
-  (function () {
-    const regras = [
-      ['Pelo menos 8 caracteres.', (s) => s.length >= 8],
-      ['Uma letra maiúscula.', (s) => /[A-ZÀ-Ú]/.test(s)],
-      ['O nome de um mês.', (s) => /janeiro|fevereiro|mar[cç]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro/i.test(s)],
-      ['Os algarismos precisam somar 13.', (s) => (s.match(/\d/g) || []).reduce((a, c) => a + Number(c), 0) === 13],
-      ['Uma destas frutas: pequi, caju ou jaca.', (s) => /pequi|caju|jaca/i.test(s)],
-      ['Nenhuma letra A. Motivo: sim.', (s) => !/[aáàâã]/i.test(s)]
-    ];
-    function pinta() {
-      const s = $('senha').value;
-      const lista = $('regras');
-      lista.textContent = '';
-      let todas = true;
-      for (const [txt, ok] of regras) {
-        const li = document.createElement('li');
-        li.textContent = txt;
-        const passou = ok(s);
-        li.classList.toggle('ok', passou);
-        lista.appendChild(li);
-        if (!passou) { todas = false; break; }
-      }
-      if (todas) carimbar(7, 'Senha aceita. Ela já é usada pelo Sr. Waldemar, do 3º andar, mas tudo bem.');
-    }
-    $('senha').addEventListener('input', pinta);
-    pinta();
-  })();
-
-  /* 08 Roleta de letras */
-  (function () {
-    const abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-    for (let i = abc.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [abc[i], abc[j]] = [abc[j], abc[i]];
-    }
-    let i = 0;
-    const lento = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setInterval(() => {
-      i = (i + 1) % abc.length;
-      $('letra').textContent = abc[i] === ' ' ? '␣' : abc[i];
-    }, lento ? 600 : 170);
-    $('parar').addEventListener('click', () => { $('nome').textContent += abc[i]; });
-    $('apagar').addEventListener('click', () => { $('nome').textContent = ''; $('s8').textContent = 'Nome apagado. Tudo.'; });
-    $('salvar').addEventListener('click', () => {
-      const nome = $('nome').textContent.trim();
-      if (nome !== 'GUSTAVOWEB') { $('s8').textContent = 'Nome não confere com o cadastro. O sistema aguarda GUSTAVOWEB.'; return; }
-      carimbar(8, 'Cadastro salvo como GUSTAVOWEB. Confere com o seu RG? Agora é tarde.');
-    });
-  })();
-
-  /* 09 Volume */
-  (function () {
-    const barra = $('barra'), bola = $('bola'), b = $('inclinar');
-    let x = 0, v = 0, ang = -7, segura = false, naFaixa = 0, t0 = 0;
-    const liga = (e) => { segura = true; if (e.pointerId !== undefined) { try { b.setPointerCapture(e.pointerId); } catch (_) {} } };
-    const desliga = () => { segura = false; };
-    b.addEventListener('pointerdown', liga);
-    b.addEventListener('pointerup', desliga);
-    b.addEventListener('pointercancel', desliga);
-    b.addEventListener('keydown', (e) => { if (e.key === ' ' || e.key === 'Enter') { segura = true; e.preventDefault(); } });
-    b.addEventListener('keyup', desliga);
-    b.addEventListener('blur', desliga);
-    function passo(t) {
-      const dt = Math.min((t - t0) / 16.67, 3) || 1; t0 = t;
-      const destino = segura ? 12 : -7;
-      ang += (destino - ang) * 0.09 * dt;
-      v += Math.sin(ang * Math.PI / 180) * 0.0011 * dt;
-      v *= Math.pow(0.985, dt);
-      x += v * dt;
-      if (x < 0) { x = 0; v = 0; }
-      if (x > 1.03) { x = 0; v = 0; naFaixa = 0; $('s9').textContent = 'A bolinha caiu. O volume voltou a zero.'; }
-      barra.style.transform = 'rotate(' + ang.toFixed(2) + 'deg)';
-      bola.style.left = Math.min(x, 1.03) * 100 + '%';
-      const p = Math.round(Math.min(x, 1) * 100);
-      $('volValor').textContent = p + '%';
-      if (p >= 65 && p <= 85) {
-        naFaixa += dt * 16.67;
-        if (naFaixa > 1000) carimbar(9, 'Volume ajustado. Sua música já acabou.');
-      } else naFaixa = 0;
-      requestAnimationFrame(passo);
-    }
-    requestAnimationFrame(passo);
-  })();
-
-  /* 10 Cookies: desligar uma chave inverte as vizinhas */
-  (function () {
-    const nomes = ['Cookies essenciais', 'Cookies de polvilho', 'Rastrear seus sonhos', 'Vender a senha do Wi-Fi', 'Avisar a sua mãe', 'Ler suas conversas com a sogra'];
-    const est = nomes.map(() => true);
-    const box = $('cookies');
-    const botoes = nomes.map((n, i) => {
-      const b = document.createElement('button');
-      b.type = 'button'; b.className = 'chave'; b.setAttribute('role', 'switch');
-      const s = document.createElement('span'); s.textContent = n;
-      b.append(s, document.createElement('i'));
-      b.addEventListener('click', () => {
-        [i - 1, i, i + 1].forEach((k) => { if (k >= 0 && k < est.length) est[k] = !est[k]; });
-        pinta();
+    const t = document.createElement('table');
+    t.innerHTML = '<thead><tr><th class="n">#</th><th>Requerente</th><th class="n">Pontos</th><th class="n">Tempo</th><th class="n">Pulos</th></tr></thead><tbody></tbody>';
+    const corpo = t.querySelector('tbody');
+    linhas.forEach((l, i) => {
+      const tr = document.createElement('tr');
+      if (l.eu) tr.className = 'eu';
+      [i + 1, String(l.nome), milhar(l.pontos), relogio(l.tempo), l.pulos].forEach((v, k) => {
+        const td = document.createElement('td');
+        td.textContent = v;
+        if (k !== 1) td.className = 'n';
+        tr.appendChild(td);
       });
-      box.appendChild(b);
-      return b;
+      corpo.appendChild(tr);
     });
-    function pinta() {
-      botoes.forEach((b, i) => b.setAttribute('aria-checked', String(est[i])));
-      if (est.every((v) => !v)) carimbar(10, 'Tudo desligado. Suas preferências valem até o próximo carregamento.');
-      else if (!feitos.has(10)) $('s10').textContent = 'Ligadas: ' + est.filter(Boolean).length + ' de 6.';
+    destino.appendChild(t);
+  }
+  let notaExtra = '';
+  function pintaRanking() {
+    const usarGeral = geral !== null;
+    const linhas = ordena(usarGeral ? geral : locais());
+    const titulo = usarGeral ? 'Ranking geral' : 'Ranking deste navegador';
+    const nota = notaExtra || (usarGeral ? 'Cada pessoa aparece com a sua melhor pontuação.' : 'Salvo apenas neste navegador.');
+    $('rankingTitulo').textContent = titulo;
+    $('rankingTituloFim').textContent = titulo;
+    tabela($('rankingInicio'), linhas);
+    tabela($('rankingFim'), linhas);
+    $('rankingNota').textContent = nota;
+    $('rankingNotaFim').textContent = nota;
+  }
+  async function registra(r) {
+    const l = locais();
+    l.push(r);
+    guarda(CHAVE, JSON.stringify(ordena(l)));
+    meuUltimo = r;
+    notaExtra = '';
+    pintaRanking();
+    if (!banco || !meuId) return;
+    try {
+      const ref = banco.collection('ranking').doc(meuId);
+      const atual = await ref.get();
+      const antigo = atual.exists ? atual.data() : null;
+      if (!antigo || r.pontos > Number(antigo.pontos) || (r.pontos === Number(antigo.pontos) && r.tempo < Number(antigo.tempo))) await ref.set(r);
+    } catch (_) {
+      notaExtra = 'Sua pontuação ficou neste navegador. O ranking geral não aceitou a gravação para o seu acesso.';
+      pintaRanking();
     }
-    pinta();
-  })();
+  }
+  async function ligaRanking() {
+    if (!window.claude || !window.claude.use) return;
+    try {
+      const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+      if (!db) return;
+      banco = db;
+      meuId = user ? await user.id() : null;
+      const espera = setTimeout(() => { notaExtra = 'Não foi possível abrir o ranking geral agora.'; pintaRanking(); }, 10000);
+      db.collection('ranking').orderBy('pontos', 'desc').limit(20).onSnapshot((snap) => {
+        if (!snap.metadata.fromCache) { clearTimeout(espera); notaExtra = ''; }
+        geral = snap.docs.map((d) => {
+          const v = d.data() || {};
+          return { nome: String(v.nome || 'Requerente').slice(0, 20), pontos: Number(v.pontos) || 0, tempo: Number(v.tempo) || 0, pulos: Number(v.pulos) || 0, eu: d.id === meuId };
+        });
+        pintaRanking();
+      }, () => { clearTimeout(espera); geral = null; banco = null; notaExtra = 'O ranking geral não está disponível. Mostrando este navegador.'; pintaRanking(); });
+    } catch (_) { /* segue com o ranking local */ }
+  }
 
-  /* 11 Dupla negação */
-  (function () {
-    const perguntas = [
-      ['Deseja não cancelar a desistência do cancelamento?', 'Sim, não quero', 'Não, quero sim'],
-      ['Tem certeza de que não está incerto?', 'Não tenho', 'Tenho que não'],
-      ['Se não concorda em discordar, clique em não discordar.', 'Não discordar', 'Discordar de não'],
-      ['Clique em Cancelar para confirmar, ou em Confirmar para cancelar.', 'Cancelar', 'Confirmar']
-    ];
-    let i = 0;
-    function pinta() {
-      const [q, a, b] = perguntas[i];
-      $('pergunta').textContent = q;
-      const box = $('respostas');
-      box.textContent = '';
-      (i % 2 ? [b, a] : [a, b]).forEach((txt) => {
-        const bt = document.createElement('button');
-        bt.type = 'button'; bt.textContent = txt;
-        bt.addEventListener('click', responde);
-        box.appendChild(bt);
-      });
-    }
-    function responde() {
-      i++;
-      if (i < perguntas.length) { pinta(); $('s11').textContent = 'Resposta ' + i + ' de ' + perguntas.length + ' registrada como: talvez.'; return; }
-      i = 0; pinta();
-      carimbar(11, 'Decisão registrada: o contrário do que você pensou.');
-    }
-    pinta();
-  })();
+  /* ---------- Sala do Cafezinho ---------- */
+  const GERADORES = {
+    desculpa: () => sorteia(['O servidor de homologação entrou em férias coletivas.', 'O bug só aparece quando alguém está olhando.', 'A biblioteca mudou de versão enquanto eu digitava.', 'Estava pronto, mas o cachorro comeu o branch.', 'Faltou luz só no meu repositório.', 'O cliente pediu uma mudança pequena: outro sistema.']),
+    commit: () => sorteia(['fix', 'fix final', 'fix final 2', 'agora vai', 'agora vai mesmo', 'pelamor', 'desfaz o último', 'refaz o que desfiz', 'ajustes', 'wip sexta 18h']),
+    bug: () => 'Bug #' + (1000 + Math.floor(Math.random() * 9000)) + ': ' + sorteia(['o botão salvar', 'o login', 'o relatório mensal', 'a tela de boas-vindas', 'o carrinho']) + ' ' + sorteia(['some às terças', 'só funciona com a impressora ligada', 'envia e-mail para o ex do cliente', 'duplica quando ninguém olha', 'trava em anos bissextos']) + '.',
+    horoscopo: () => sorteia(['Mercúrio retrógrado no seu pipeline. Evite deploy na sexta.', 'Hoje um PR seu será aprovado sem ninguém ter lido.', 'Um colega vai dizer "é rapidinho". Fuja.', 'Sua sorte está nos logs. Seu azar também.', 'Número da sorte: 404. Cor do dia: vermelho de teste quebrado.']),
+    portfolio: () => sorteia(['HTML: copio e colo muito bem.', 'CSS: centralizo uma div em três tentativas.', 'JavaScript: "undefined" é meu sobrenome.', 'Git: conheço add, commit e o pânico.', 'SQL: já esqueci o WHERE uma vez. Uma.', 'Inglês técnico: leio mensagens de erro.'])
+  };
+  document.querySelectorAll('[data-gerador]').forEach((b) => b.addEventListener('click', () => {
+    $('respostaCafe').textContent = GERADORES[b.dataset.gerador]();
+  }));
+  $('revisar').addEventListener('click', () => {
+    $('revisao').textContent = $('codigoReview').value.trim() ? 'Quem escreveu isso?' : 'Nenhum código, nenhum bug. Aprovado.';
+  });
 
-  /* 12 Progresso */
-  (function () {
-    const recados = ['Faltam 3 minutos.', 'Faltam 4 horas.', 'Faltam 2 minutos.', 'Faltam 11 dias.', 'Reconhecendo firma.', 'Aguardando o estagiário voltar do almoço.', 'Faltam 40 segundos.', 'Faltam 40 segundos.', 'Faltam 40 segundos.'];
-    let pct = 0, timer = null, voltou = false, r = 0;
-    const pinta = (txt) => {
-      $('pct').textContent = txt || Math.floor(pct) + '%';
-      $('trilho').style.width = Math.min(pct, 100) + '%';
-    };
-    function zeno() {
-      let n = 1;
-      $('acelerar').disabled = true;
-      const fim = setInterval(() => {
-        pinta('99,' + '9'.repeat(n) + '%');
-        n++;
-        if (n > 7) {
-          clearInterval(fim); pct = 100; pinta();
-          $('recado').textContent = 'Erro 0: nenhum erro. Por favor, envie novamente.';
-          $('enviar').disabled = false;
-          carimbar(12, 'Envio concluído e perdido, nessa ordem.');
-        }
-      }, 700);
-    }
-    $('enviar').addEventListener('click', () => {
-      pct = 0; voltou = false; pinta();
-      $('enviar').disabled = true; $('acelerar').disabled = false;
-      clearInterval(timer);
-      timer = setInterval(() => {
-        pct += (100 - pct) * 0.07 + Math.random();
-        if (pct > 60 && !voltou) { voltou = true; pct = 38; $('recado').textContent = 'Encontramos mais trabalho.'; }
-        else if (Math.random() < 0.18) { $('recado').textContent = recados[r++ % recados.length]; }
-        if (pct >= 99) { pct = 99; pinta(); clearInterval(timer); $('recado').textContent = 'Quase.'; zeno(); return; }
-        pinta();
-      }, 300);
-    });
-    $('acelerar').addEventListener('click', () => {
-      pct = Math.max(0, pct - 5); pinta();
-      $('recado').textContent = 'Pedido de urgência anexado. A fila agora inclui o seu pedido.';
-    });
-  })();
+  $('nomeJogador').value = le('ux-hostil-nome') || '';
+  pintaRanking();
+  ligaRanking();
 })();
 </script>
 </body>
