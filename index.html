@@ -796,8 +796,11 @@ tr.eu td { font-weight: 700; color: var(--azul); }
       el.innerHTML = '<div class="palco roleta"><div class="letra" id="letra" aria-hidden="true">A</div><div><div class="nome" id="nome" aria-label="Nome digitado"></div><div class="linha-acao"><button id="parar" type="button">Parar</button><button id="apagar" type="button">Apagar tudo</button><button id="salvar" type="button">Salvar</button></div></div></div>';
       const abc = embaralha('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''));
       let i = 0;
-      const lento = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      g.iv(() => { i = (i + 1) % abc.length; q('#letra').textContent = abc[i]; }, lento ? 600 : 170);
+      const inicio = performance.now();
+      g.iv(() => {
+        i = Math.floor((performance.now() - inicio) / 220) % abc.length;
+        q('#letra').textContent = abc[i];
+      }, 40);
       q('#parar').addEventListener('click', () => { q('#nome').textContent += abc[i]; });
       q('#apagar').addEventListener('click', () => { q('#nome').textContent = ''; g.msg('Nome apagado. Tudo.'); });
       q('#salvar').addEventListener('click', () => {
